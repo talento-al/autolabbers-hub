@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Autolabbers Hub</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #2DBD6E;
+    --green-light: rgba(45,189,110,0.15);
+    --green-border: rgba(45,189,110,0.3);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ── MODO OSCURO (default) ── */
+  body.dark {
+    background: #111113;
+    color: #fff;
+    --bg-hero:    #1C1C1E;
+    --bg-card:    rgba(255,255,255,0.05);
+    --bg-input:   rgba(255,255,255,0.07);
+    --border:     rgba(255,255,255,0.08);
+    --border-md:  rgba(255,255,255,0.15);
+    --text:       #ffffff;
+    --muted:      rgba(255,255,255,0.5);
+    --hint:       rgba(255,255,255,0.3);
+    --toggle-bg:  rgba(255,255,255,0.08);
+    --toggle-ico: rgba(255,255,255,0.6);
+    --seg-active-bg: rgba(255,255,255,0.12);
+    --seg-active-txt: #fff;
+    --input-bg:   rgba(255,255,255,0.07);
+    --btn-back-border: rgba(255,255,255,0.15);
+    --btn-back-txt: rgba(255,255,255,0.5);
+    --success-bg: rgba(45,189,110,0.12);
+    --success-txt: #2DBD6E;
+    --err-bg:     rgba(224,68,68,0.12);
+    --err-txt:    #f87171;
+  }
+
+  /* ── MODO CLARO ── */
+  body.light {
+    background: #f0f0ee;
+    color: #1a1a1a;
+    --bg-hero:    #ffffff;
+    --bg-card:    #f5f5f3;
+    --border:     rgba(0,0,0,0.08);
+    --border-md:  rgba(0,0,0,0.15);
+    --text:       #1a1a1a;
+    --muted:      #6b6b6b;
+    --hint:       #999;
+    --toggle-bg:  rgba(0,0,0,0.06);
+    --toggle-ico: #555;
+    --seg-active-bg: #1a1a1a;
+    --seg-active-txt: #fff;
+    --input-bg:   #fff;
+    --btn-back-border: rgba(0,0,0,0.15);
+    --btn-back-txt: #6b6b6b;
+    --success-bg: #eaf3de;
+    --success-txt: #3b6d11;
+    --err-bg:     #fcebeb;
+    --err-txt:    #a32d2d;
+  }
+
+  .page { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 3rem;
+  }
+  .logo-row { display: flex; align-items: center; gap: 10px; }
+  .logo-circle {
+    width: 30px; height: 30px; background: var(--green);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  }
+  .logo-circle svg { width: 16px; height: 16px; }
+  .logo-text { font-size: 15px; font-weight: 500; color: var(--text); }
+  .logo-text span { color: var(--green); }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-links { display: flex; gap: 20px; list-style: none; }
+  .nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--text); }
+  .toggle-btn {
+    width: 34px; height: 34px; background: var(--toggle-bg);
+    border: 0.5px solid var(--border-md); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+  }
+  .toggle-btn svg { width: 16px; height: 16px; stroke: var(--toggle-ico); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--bg-hero);
+    border-radius: 20px;
+    border: 0.5px solid var(--border);
+    padding: 3rem 3rem 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-light); border: 0.5px solid var(--green-border);
+    border-radius: 100px; padding: 4px 12px;
+    font-size: 12px; color: var(--green); font-weight: 500; margin-bottom: 1.25rem;
+  }
+  .badge-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
+  .hero-title {
+    font-size: 42px; font-weight: 500; color: var(--text);
+    line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 1rem;
+  }
+  .hero-title em { font-style: normal; color: var(--green); }
+  .hero-sub {
+    font-size: 15px; color: var(--muted); line-height: 1.65;
+    max-width: 480px; margin-bottom: 1.75rem;
+  }
+  .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 3rem; }
+  .btn-primary {
+    background: var(--green); color: #fff; border: none;
+    border-radius: 8px; padding: 11px 22px; font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-secondary {
+    background: transparent; color: var(--green);
+    border: 1.5px solid var(--green); border-radius: 8px;
+    padding: 11px 22px; font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: var(--green-light); }
+
+  /* ── TARJETAS HERO ── */
+  .hero-cards { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+  .hcard {
+    background: var(--bg-card); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 1.1rem;
+    display: flex; flex-direction: column; gap: 8px; cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .hcard:hover { border-color: var(--green); }
+  .hcard-icon {
+    width: 32px; height: 32px; background: var(--green-light);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  }
+  .hcard-icon svg { width: 15px; height: 15px; stroke: var(--green); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .hcard-label { font-size: 11px; color: var(--hint); margin-top: 2px; }
+  .hcard-title { font-size: 13px; font-weight: 500; color: var(--text); }
+
+  /* ── SECCIÓN VACACIONES ── */
+  .section { margin-top: 1.5rem; }
+  .section-card {
+    background: var(--bg-hero); border: 0.5px solid var(--border);
+    border-radius: 20px; padding: 2.5rem 3rem;
+  }
+  .section-label {
+    font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--green); margin-bottom: 0.5rem;
+  }
+  .section-title { font-size: 26px; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
+  .section-sub { font-size: 14px; color: var(--muted); margin-bottom: 2rem; }
+
+  /* Selector país */
+  .seg { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+  .seg-btn {
+    flex: 1; padding: 10px 8px;
+    border: 0.5px solid var(--border-md); border-radius: 8px;
+    background: transparent; font-size: 14px; color: var(--muted);
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+  .seg-btn.active {
+    background: var(--seg-active-bg); color: var(--seg-active-txt);
+    border-color: transparent; font-weight: 500;
+  }
+
+  /* Input */
+  .field-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .field-input {
+    width: 100%; padding: 11px 14px;
+    border: 0.5px solid var(--border-md); border-radius: 8px;
+    font-size: 15px; color: var(--text); background: var(--input-bg);
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .field-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,189,110,0.12); }
+
+  /* Error */
+  .error-box {
+    margin-top: 0.75rem; padding: 10px 14px;
+    background: var(--err-bg); border: 0.5px solid rgba(224,68,68,0.2);
+    border-radius: 8px; font-size: 13px; color: var(--err-txt); display: none;
+  }
+
+  /* Botón buscar */
+  .btn-buscar {
+    width: 100%; margin-top: 1rem; padding: 12px;
+    border: none; border-radius: 8px; background: var(--green);
+    color: #fff; font-size: 15px; font-weight: 500; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-buscar:hover { opacity: 0.88; }
+  .btn-buscar:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .vac-note { font-size: 12px; color: var(--hint); text-align: center; margin-top: 1rem; }
+
+  /* Resultado */
+  .result-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.5rem; }
+  .avatar {
+    width: 50px; height: 50px; border-radius: 50%;
+    background: var(--green-light); color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 500; flex-shrink: 0;
+  }
+  .res-name { font-size: 17px; font-weight: 500; color: var(--text); }
+  .res-sub  { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .vac-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem; }
+  .vac-card { background: var(--bg-card); border-radius: 10px; padding: 1rem; }
+  .vac-card.highlight { background: var(--success-bg); }
+  .vac-card.negative  { background: var(--err-bg); }
+  .vac-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .vac-card.highlight .vac-label { color: var(--success-txt); opacity: 0.8; }
+  .vac-card.negative .vac-label  { color: var(--err-txt); opacity: 0.8; }
+  .vac-num { font-size: 30px; font-weight: 500; color: var(--text); line-height: 1; }
+  .vac-card.highlight .vac-num { color: var(--success-txt); }
+  .vac-card.negative .vac-num  { color: var(--err-txt); }
+  .vac-unit { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .vac-card.highlight .vac-unit { color: var(--success-txt); opacity: 0.8; }
+
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 1.25rem 0; }
+  .detail-row { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; }
+  .detail-row span:first-child { color: var(--muted); }
+  .detail-row span:last-child  { font-weight: 500; color: var(--text); }
+
+  .btn-back {
+    width: 100%; margin-top: 1.25rem; padding: 10px;
+    border: 0.5px solid var(--btn-back-border); border-radius: 8px;
+    background: transparent; font-size: 14px; color: var(--btn-back-txt); cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-back:hover { background: var(--bg-card); }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .footer { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--hint); }
+  .footer a { color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2rem 1.5rem; }
+    .hero-title { font-size: 30px; }
+    .hero-cards { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .nav-links { display: none; }
+    .section-card { padding: 1.75rem 1.5rem; }
+  }
+</style>
+</head>
+<body class="dark">
+
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo-row">
+      <div class="logo-circle">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="10,2 18,17 2,17" fill="white" opacity="0.15"/>
+          <polygon points="10,2 14,17 6,17" fill="white" opacity="0.95"/>
+        </svg>
+      </div>
+      <span class="logo-text">Autolabbers <span>Hub</span></span>
+    </div>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#vacaciones">Vacaciones</a></li>
+        <li><a href="#politicas">Políticas</a></li>
+        <li><a href="#fechas">Fechas clave</a></li>
+        <li><a href="#contactos">Contactos</a></li>
+      </ul>
+      <button class="toggle-btn" onclick="toggleMode()" title="Cambiar modo claro/oscuro">
+        <svg id="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="icon-sun"  viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge"><div class="badge-dot"></div>Tu espacio como Autolabber</div>
+    <h1 class="hero-title">Todo lo que<br>necesitas, <em>en un<br>solo lugar.</em></h1>
+    <p class="hero-sub">Consulta tus vacaciones, revisa políticas, encuentra fechas importantes y contacta al equipo correcto — sin dar vueltas.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="scrollTo('vacaciones')">Consultar mis vacaciones</button>
+      <button class="btn-secondary" onclick="scrollTo('politicas')">Ver políticas →</button>
+    </div>
+    <div class="hero-cards">
+      <div class="hcard" onclick="scrollTo('vacaciones')">
+        <div class="hcard-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="hcard-label">Consulta rápida</div>
+        <div class="hcard-title">Mis días de vacaciones</div>
+      </div>
+      <div class="hcard" onclick="scrollTo('politicas')">
+        <div class="hcard-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="hcard-label">Documentos</div>
+        <div class="hcard-title">Reglamento y políticas</div>
+      </div>
+      <div class="hcard" onclick="scrollTo('contactos')">
+        <div class="hcard-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="hcard-label">Equipo</div>
+        <div class="hcard-title">Directorio de contactos</div>
+      </div>
+      <div class="hcard" onclick="scrollTo('fechas')">
+        <div class="hcard-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="hcard-label">Fechas</div>
+        <div class="hcard-title">Festivos y nómina</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN VACACIONES -->
+  <section class="section" id="vacaciones">
+    <div class="section-card">
+      <div class="section-label">Consulta rápida</div>
+      <h2 class="section-title">Mis días de vacaciones</h2>
+      <p class="section-sub">Ingresa tu documento para ver tu saldo disponible.</p>
+
+      <!-- PANTALLA LOGIN -->
+      <div id="vac-login" class="screen active">
+        <div class="seg">
+          <button class="seg-btn active" id="btn-mx" onclick="selectPais('MX')">🇲🇽 México (CURP)</button>
+          <button class="seg-btn"        id="btn-co" onclick="selectPais('CO')">🇨🇴 Colombia (CC)</button>
+        </div>
+        <div class="field-label" id="field-label">CURP</div>
+        <input type="text" class="field-input" id="doc-input"
+          placeholder="Ej. GOML850101HDFNRN02" maxlength="18"
+          autocomplete="off" autocapitalize="characters"
+          oninput="onInput(this)"
+          onkeydown="if(event.key==='Enter') buscar()" />
+        <div class="error-box" id="error-box"></div>
+        <button class="btn-buscar" id="btn-buscar" onclick="buscar()">Ver mis días disponibles</button>
+        <p class="vac-note">Tu información es privada. Solo tú puedes ver tus datos.</p>
+      </div>
+
+      <!-- PANTALLA RESULTADO -->
+      <div id="vac-result" class="screen">
+        <div class="result-header">
+          <div class="avatar" id="res-avatar">--</div>
+          <div>
+            <div class="res-name" id="res-name">—</div>
+            <div class="res-sub"  id="res-sub">—</div>
+          </div>
+        </div>
+        <div class="vac-grid">
+          <div class="vac-card highlight" id="card-saldo">
+            <div class="vac-label">Días disponibles</div>
+            <div class="vac-num" id="res-saldo">—</div>
+            <div class="vac-unit">días hábiles</div>
+          </div>
+          <div class="vac-card">
+            <div class="vac-label">Días tomados</div>
+            <div class="vac-num" id="res-consumidos">—</div>
+            <div class="vac-unit">acumulados</div>
+          </div>
+        </div>
+        <hr/>
+        <div class="detail-row"><span>Fecha de ingreso</span><span id="res-fecha">—</span></div>
+        <div class="detail-row"><span>Antigüedad</span><span id="res-antiguedad">—</span></div>
+        <div class="detail-row"><span>Cargo</span><span id="res-cargo">—</span></div>
+        <button class="btn-back" onclick="volver()">← Nueva consulta</button>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    ¿Dudas? Escribe a <a href="mailto:said.garcia@autolab.mx">said.garcia@autolab.mx</a>
+  </footer>
+
+</div>
+
+<script>
+  // ─────────────────────────────────────────
+  // ⚙️  https://script.google.com/macros/s/AKfycbzTmb9LQYdb1wEtz8VyqNEG4tM4fVsJxsN5VRGYOqUUqCBTTu2lh2p_CrQNlwiLwDqyMw/exec
+  // ─────────────────────────────────────────
+  var APPS_SCRIPT_URL = "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbzTmb9LQYdb1wEtz8VyqNEG4tM4fVsJxsN5VRGYOqUUqCBTTu2lh2p_CrQNlwiLwDqyMw/exec/exec";
+
+  // ── Toggle claro / oscuro ──
+  var isDark = true;
+  function toggleMode() {
+    isDark = !isDark;
+    document.body.className = isDark ? "dark" : "light";
+    document.getElementById("icon-moon").style.display = isDark ? "block" : "none";
+    document.getElementById("icon-sun").style.display  = isDark ? "none"  : "block";
+    try { localStorage.setItem("al_theme", isDark ? "dark" : "light"); } catch(e){}
+  }
+  try {
+    var saved = localStorage.getItem("al_theme");
+    if (saved === "light") { isDark = false; document.body.className = "light"; document.getElementById("icon-moon").style.display="none"; document.getElementById("icon-sun").style.display="block"; }
+  } catch(e){}
+
+  // ── Scroll suave ──
+  function scrollTo(id) {
+    var el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // ── Selector de país ──
+  var pais = "MX";
+  function selectPais(p) {
+    pais = p;
+    document.getElementById("btn-mx").classList.toggle("active", p === "MX");
+    document.getElementById("btn-co").classList.toggle("active", p === "CO");
+    var input = document.getElementById("doc-input");
+    var label = document.getElementById("field-label");
+    if (p === "MX") {
+      label.textContent = "CURP";
+      input.placeholder = "Ej. GOML850101HDFNRN02";
+      input.maxLength = 18;
+    } else {
+      label.textContent = "Cédula de ciudadanía";
+      input.placeholder = "Ej. 1032456789";
+      input.maxLength = 12;
+    }
+    input.value = "";
+    ocultarError();
+  }
+
+  function onInput(el) {
+    if (pais === "MX") el.value = el.value.toUpperCase().replace(/[^A-Z0-9]/g,"");
+    else               el.value = el.value.replace(/[^0-9]/g,"");
+    ocultarError();
+  }
+
+  function ocultarError() {
+    var eb = document.getElementById("error-box");
+    eb.style.display = "none"; eb.textContent = "";
+  }
+  function mostrarError(msg) {
+    var eb = document.getElementById("error-box");
+    eb.textContent = msg; eb.style.display = "block";
+  }
+
+  function buscar() {
+    var doc = document.getElementById("doc-input").value.trim();
+    if (!doc || doc.length < 5) { mostrarError("Ingresa un documento válido."); return; }
+    ocultarError();
+    var btn = document.getElementById("btn-buscar");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Consultando…';
+    var script = document.createElement("script");
+    script.src = APPS_SCRIPT_URL + "?callback=onResult&doc=" + encodeURIComponent(doc);
+    script.onerror = function() {
+      btn.disabled = false; btn.innerHTML = "Ver mis días disponibles";
+      mostrarError("No se pudo conectar. Verifica tu conexión e intenta de nuevo.");
+    };
+    document.body.appendChild(script);
+  }
+
+  function onResult(data) {
+    var btn = document.getElementById("btn-buscar");
+    btn.disabled = false; btn.innerHTML = "Ver mis días disponibles";
+    if (!data.ok) { mostrarError(data.error || "Error desconocido."); return; }
+    var partes = data.nombre.split(" ");
+    document.getElementById("res-avatar").textContent = (partes[0][0] + (partes[1] ? partes[1][0] : "")).toUpperCase();
+    document.getElementById("res-name").textContent       = data.nombre;
+    document.getElementById("res-sub").textContent        = data.posicion + " · " + data.pais;
+    document.getElementById("res-fecha").textContent      = data.fechaIngreso;
+    document.getElementById("res-antiguedad").textContent = data.antiguedad;
+    document.getElementById("res-cargo").textContent      = data.posicion;
+    var saldo = data.saldo;
+    document.getElementById("res-saldo").textContent      = saldo % 1 === 0 ? saldo : saldo.toFixed(2);
+    document.getElementById("res-consumidos").textContent = data.consumidos;
+    var cardSaldo = document.getElementById("card-saldo");
+    if (saldo < 0) { cardSaldo.classList.remove("highlight"); cardSaldo.classList.add("negative"); }
+    else           { cardSaldo.classList.add("highlight");    cardSaldo.classList.remove("negative"); }
+    document.getElementById("vac-login").classList.remove("active");
+    document.getElementById("vac-result").classList.add("active");
+  }
+
+  function volver() {
+    document.getElementById("vac-result").classList.remove("active");
+    document.getElementById("vac-login").classList.add("active");
+    document.getElementById("doc-input").value = "";
+    ocultarError();
+  }
+</script>
+</body>
+</html>
