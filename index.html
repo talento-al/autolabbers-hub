@@ -16,64 +16,66 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     transition: background 0.3s, color 0.3s;
+    min-height: 100vh;
   }
 
-  /* ── MODO OSCURO (default) ── */
   body.dark {
-    background: #111113;
-    color: #fff;
-    --bg-hero:    #1C1C1E;
-    --bg-card:    rgba(255,255,255,0.05);
-    --bg-input:   rgba(255,255,255,0.07);
-    --border:     rgba(255,255,255,0.08);
-    --border-md:  rgba(255,255,255,0.15);
-    --text:       #ffffff;
-    --muted:      rgba(255,255,255,0.5);
-    --hint:       rgba(255,255,255,0.3);
-    --toggle-bg:  rgba(255,255,255,0.08);
-    --toggle-ico: rgba(255,255,255,0.6);
+    background: #111113; color: #fff;
+    --bg-hero:   #1C1C1E;
+    --bg-card:   rgba(255,255,255,0.05);
+    --border:    rgba(255,255,255,0.08);
+    --border-md: rgba(255,255,255,0.15);
+    --text:      #ffffff;
+    --muted:     rgba(255,255,255,0.5);
+    --hint:      rgba(255,255,255,0.3);
+    --toggle-bg: rgba(255,255,255,0.08);
+    --toggle-ico:rgba(255,255,255,0.6);
     --seg-active-bg: rgba(255,255,255,0.12);
-    --seg-active-txt: #fff;
-    --input-bg:   rgba(255,255,255,0.07);
+    --seg-active-txt:#fff;
+    --input-bg:  rgba(255,255,255,0.07);
     --btn-back-border: rgba(255,255,255,0.15);
     --btn-back-txt: rgba(255,255,255,0.5);
     --success-bg: rgba(45,189,110,0.12);
-    --success-txt: #2DBD6E;
-    --err-bg:     rgba(224,68,68,0.12);
-    --err-txt:    #f87171;
+    --success-txt:#2DBD6E;
+    --err-bg:    rgba(224,68,68,0.12);
+    --err-txt:   #f87171;
+    --choice-bg: rgba(255,255,255,0.04);
+    --choice-border: rgba(255,255,255,0.1);
+    --choice-hover: rgba(255,255,255,0.08);
   }
 
-  /* ── MODO CLARO ── */
   body.light {
-    background: #f0f0ee;
-    color: #1a1a1a;
-    --bg-hero:    #ffffff;
-    --bg-card:    #f5f5f3;
-    --border:     rgba(0,0,0,0.08);
-    --border-md:  rgba(0,0,0,0.15);
-    --text:       #1a1a1a;
-    --muted:      #6b6b6b;
-    --hint:       #999;
-    --toggle-bg:  rgba(0,0,0,0.06);
-    --toggle-ico: #555;
+    background: #f0f0ee; color: #1a1a1a;
+    --bg-hero:   #ffffff;
+    --bg-card:   #f5f5f3;
+    --border:    rgba(0,0,0,0.08);
+    --border-md: rgba(0,0,0,0.15);
+    --text:      #1a1a1a;
+    --muted:     #6b6b6b;
+    --hint:      #999;
+    --toggle-bg: rgba(0,0,0,0.06);
+    --toggle-ico:#555;
     --seg-active-bg: #1a1a1a;
-    --seg-active-txt: #fff;
-    --input-bg:   #fff;
+    --seg-active-txt:#fff;
+    --input-bg:  #fff;
     --btn-back-border: rgba(0,0,0,0.15);
     --btn-back-txt: #6b6b6b;
-    --success-bg: #eaf3de;
-    --success-txt: #3b6d11;
-    --err-bg:     #fcebeb;
-    --err-txt:    #a32d2d;
+    --success-bg:#eaf3de;
+    --success-txt:#3b6d11;
+    --err-bg:    #fcebeb;
+    --err-txt:   #a32d2d;
+    --choice-bg: #ffffff;
+    --choice-border: rgba(0,0,0,0.1);
+    --choice-hover: #f5f5f3;
   }
 
+  /* ── LAYOUT ── */
   .page { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+  .screen { display: none; }
+  .screen.active { display: block; }
 
   /* ── NAV ── */
-  nav {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 3rem;
-  }
+  nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3rem; }
   .logo-row { display: flex; align-items: center; gap: 10px; }
   .logo-img { height: 32px; width: auto; display: block; }
   .logo-text { font-size: 15px; font-weight: 500; color: var(--text); }
@@ -86,17 +88,104 @@
     width: 34px; height: 34px; background: var(--toggle-bg);
     border: 0.5px solid var(--border-md); border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+    cursor: pointer; flex-shrink: 0;
   }
   .toggle-btn svg { width: 16px; height: 16px; stroke: var(--toggle-ico); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* ── HERO ── */
+  /* ── PANTALLA LOGIN ── */
+  .login-wrap {
+    min-height: 80vh; display: flex; align-items: center; justify-content: center;
+  }
+  .login-card {
+    background: var(--bg-hero); border: 0.5px solid var(--border);
+    border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 420px;
+  }
+  .login-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-light); border: 0.5px solid var(--green-border);
+    border-radius: 100px; padding: 4px 12px;
+    font-size: 12px; color: var(--green); font-weight: 500; margin-bottom: 1.25rem;
+  }
+  .login-badge-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
+  .login-title { font-size: 24px; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
+  .login-sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 1.75rem; }
+
+  .seg { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+  .seg-btn {
+    flex: 1; padding: 10px 8px; border: 0.5px solid var(--border-md);
+    border-radius: 8px; background: transparent; font-size: 14px; color: var(--muted);
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+  .seg-btn.active { background: var(--seg-active-bg); color: var(--seg-active-txt); border-color: transparent; font-weight: 500; }
+
+  .field-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .field-input {
+    width: 100%; padding: 11px 14px; border: 0.5px solid var(--border-md);
+    border-radius: 8px; font-size: 15px; color: var(--text); background: var(--input-bg);
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s; letter-spacing: 0.02em;
+  }
+  .field-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,189,110,0.12); }
+
+  .error-box {
+    margin-top: 0.75rem; padding: 10px 14px;
+    background: var(--err-bg); border: 0.5px solid rgba(224,68,68,0.2);
+    border-radius: 8px; font-size: 13px; color: var(--err-txt); display: none;
+    line-height: 1.5;
+  }
+  .error-box a { color: var(--err-txt); }
+
+  .btn-primary {
+    width: 100%; margin-top: 1rem; padding: 12px; border: none;
+    border-radius: 8px; background: var(--green); color: #fff;
+    font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .login-note { font-size: 12px; color: var(--hint); text-align: center; margin-top: 1rem; }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── PANTALLA ELEGIR HUB (AMBOS) ── */
+  .choice-wrap {
+    min-height: 80vh; display: flex; align-items: center; justify-content: center;
+  }
+  .choice-card {
+    background: var(--bg-hero); border: 0.5px solid var(--border);
+    border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 480px;
+  }
+  .choice-greeting { font-size: 13px; color: var(--muted); margin-bottom: 0.4rem; }
+  .choice-title { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 0.5rem; }
+  .choice-sub { font-size: 14px; color: var(--muted); margin-bottom: 1.75rem; line-height: 1.6; }
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .choice-btn {
+    background: var(--choice-bg); border: 0.5px solid var(--choice-border);
+    border-radius: 14px; padding: 1.5rem 1.25rem; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 10px; text-align: left;
+  }
+  .choice-btn:hover { border-color: var(--green); background: var(--choice-hover); }
+  .choice-flag { font-size: 32px; line-height: 1; }
+  .choice-country { font-size: 16px; font-weight: 500; color: var(--text); }
+  .choice-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .btn-logout {
+    width: 100%; margin-top: 1.25rem; padding: 10px;
+    border: 0.5px solid var(--btn-back-border); border-radius: 8px;
+    background: transparent; font-size: 14px; color: var(--btn-back-txt); cursor: pointer;
+  }
+  .btn-logout:hover { background: var(--bg-card); }
+
+  /* ── PANTALLA HUB ── */
   .hero {
-    background: var(--bg-hero);
-    border-radius: 20px;
-    border: 0.5px solid var(--border);
-    padding: 3rem 3rem 2.5rem;
-    margin-bottom: 1.5rem;
+    background: var(--bg-hero); border-radius: 20px; border: 0.5px solid var(--border);
+    padding: 3rem 3rem 2.5rem; margin-bottom: 1.5rem;
   }
   .badge {
     display: inline-flex; align-items: center; gap: 6px;
@@ -105,37 +194,26 @@
     font-size: 12px; color: var(--green); font-weight: 500; margin-bottom: 1.25rem;
   }
   .badge-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
-  .hero-title {
-    font-size: 42px; font-weight: 500; color: var(--text);
-    line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 1rem;
-  }
+  .hero-title { font-size: 40px; font-weight: 500; color: var(--text); line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 1rem; }
   .hero-title em { font-style: normal; color: var(--green); }
-  .hero-sub {
-    font-size: 15px; color: var(--muted); line-height: 1.65;
-    max-width: 480px; margin-bottom: 1.75rem;
-  }
+  .hero-sub { font-size: 15px; color: var(--muted); line-height: 1.65; max-width: 480px; margin-bottom: 1.75rem; }
   .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 3rem; }
-  .btn-primary {
+  .btn-green {
     background: var(--green); color: #fff; border: none;
-    border-radius: 8px; padding: 11px 22px; font-size: 14px; font-weight: 500; cursor: pointer;
-    transition: opacity 0.15s;
+    border-radius: 8px; padding: 11px 22px; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s;
   }
-  .btn-primary:hover { opacity: 0.88; }
-  .btn-secondary {
-    background: transparent; color: var(--green);
-    border: 1.5px solid var(--green); border-radius: 8px;
-    padding: 11px 22px; font-size: 14px; font-weight: 500; cursor: pointer;
-    transition: background 0.15s;
+  .btn-green:hover { opacity: 0.88; }
+  .btn-outline {
+    background: transparent; color: var(--green); border: 1.5px solid var(--green);
+    border-radius: 8px; padding: 11px 22px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s;
   }
-  .btn-secondary:hover { background: var(--green-light); }
+  .btn-outline:hover { background: var(--green-light); }
 
-  /* ── TARJETAS HERO ── */
   .hero-cards { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
   .hcard {
-    background: var(--bg-card); border: 0.5px solid var(--border);
-    border-radius: 12px; padding: 1.1rem;
-    display: flex; flex-direction: column; gap: 8px; cursor: pointer;
-    transition: border-color 0.15s;
+    background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px;
+    padding: 1.1rem; display: flex; flex-direction: column; gap: 8px;
+    cursor: pointer; transition: border-color 0.15s;
   }
   .hcard:hover { border-color: var(--green); }
   .hcard-icon {
@@ -152,58 +230,12 @@
     background: var(--bg-hero); border: 0.5px solid var(--border);
     border-radius: 20px; padding: 2.5rem 3rem;
   }
-  .section-label {
-    font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--green); margin-bottom: 0.5rem;
-  }
+  .section-label { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green); margin-bottom: 0.5rem; }
   .section-title { font-size: 26px; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
   .section-sub { font-size: 14px; color: var(--muted); margin-bottom: 2rem; }
 
-  /* Selector país */
-  .seg { display: flex; gap: 8px; margin-bottom: 1.25rem; }
-  .seg-btn {
-    flex: 1; padding: 10px 8px;
-    border: 0.5px solid var(--border-md); border-radius: 8px;
-    background: transparent; font-size: 14px; color: var(--muted);
-    cursor: pointer; transition: all 0.15s;
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-  }
-  .seg-btn.active {
-    background: var(--seg-active-bg); color: var(--seg-active-txt);
-    border-color: transparent; font-weight: 500;
-  }
+  .vac-loading { font-size: 14px; color: var(--muted); padding: 1rem 0; }
 
-  /* Input */
-  .field-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-  .field-input {
-    width: 100%; padding: 11px 14px;
-    border: 0.5px solid var(--border-md); border-radius: 8px;
-    font-size: 15px; color: var(--text); background: var(--input-bg);
-    outline: none; transition: border-color 0.15s, box-shadow 0.15s;
-    letter-spacing: 0.02em;
-  }
-  .field-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,189,110,0.12); }
-
-  /* Error */
-  .error-box {
-    margin-top: 0.75rem; padding: 10px 14px;
-    background: var(--err-bg); border: 0.5px solid rgba(224,68,68,0.2);
-    border-radius: 8px; font-size: 13px; color: var(--err-txt); display: none;
-  }
-
-  /* Botón buscar */
-  .btn-buscar {
-    width: 100%; margin-top: 1rem; padding: 12px;
-    border: none; border-radius: 8px; background: var(--green);
-    color: #fff; font-size: 15px; font-weight: 500; cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  .btn-buscar:hover { opacity: 0.88; }
-  .btn-buscar:disabled { opacity: 0.45; cursor: not-allowed; }
-
-  .vac-note { font-size: 12px; color: var(--hint); text-align: center; margin-top: 1rem; }
-
-  /* Resultado */
   .result-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.5rem; }
   .avatar {
     width: 50px; height: 50px; border-radius: 50%;
@@ -220,182 +252,205 @@
   .vac-card.negative  { background: var(--err-bg); }
   .vac-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
   .vac-card.highlight .vac-label { color: var(--success-txt); opacity: 0.8; }
-  .vac-card.negative .vac-label  { color: var(--err-txt); opacity: 0.8; }
+  .vac-card.negative  .vac-label { color: var(--err-txt); opacity: 0.8; }
   .vac-num { font-size: 30px; font-weight: 500; color: var(--text); line-height: 1; }
   .vac-card.highlight .vac-num { color: var(--success-txt); }
-  .vac-card.negative .vac-num  { color: var(--err-txt); }
+  .vac-card.negative  .vac-num { color: var(--err-txt); }
   .vac-unit { font-size: 12px; color: var(--muted); margin-top: 3px; }
   .vac-card.highlight .vac-unit { color: var(--success-txt); opacity: 0.8; }
+  .vac-no-aplica { font-size: 14px; color: var(--muted); padding: 0.5rem 0; line-height: 1.6; }
 
   hr { border: none; border-top: 0.5px solid var(--border); margin: 1.25rem 0; }
   .detail-row { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; }
   .detail-row span:first-child { color: var(--muted); }
   .detail-row span:last-child  { font-weight: 500; color: var(--text); }
 
-  .btn-back {
-    width: 100%; margin-top: 1.25rem; padding: 10px;
-    border: 0.5px solid var(--btn-back-border); border-radius: 8px;
-    background: transparent; font-size: 14px; color: var(--btn-back-txt); cursor: pointer;
-    transition: background 0.15s;
-  }
-  .btn-back:hover { background: var(--bg-card); }
-
-  .spinner {
-    display: inline-block; width: 14px; height: 14px;
-    border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff;
-    border-radius: 50%; animation: spin 0.7s linear infinite;
-    vertical-align: middle; margin-right: 6px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .screen { display: none; }
-  .screen.active { display: block; }
-
   .footer { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--hint); }
   .footer a { color: var(--muted); }
 
   @media (max-width: 600px) {
     .hero { padding: 2rem 1.5rem; }
-    .hero-title { font-size: 30px; }
+    .hero-title { font-size: 28px; }
     .hero-cards { grid-template-columns: repeat(2, minmax(0,1fr)); }
     .nav-links { display: none; }
     .section-card { padding: 1.75rem 1.5rem; }
+    .choice-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body class="dark">
-
 <div class="page">
 
-  <!-- NAV -->
+  <!-- NAV (siempre visible) -->
   <nav>
     <div class="logo-row">
       <img src="logo-04 (2).png" alt="Autolab" class="logo-img" />
       <span class="logo-text">Autolabbers <span>Hub</span></span>
     </div>
     <div class="nav-right">
-      <ul class="nav-links">
+      <ul class="nav-links" id="nav-links" style="display:none">
         <li><a href="#vacaciones">Vacaciones</a></li>
         <li><a href="#politicas">Políticas</a></li>
         <li><a href="#fechas">Fechas clave</a></li>
         <li><a href="#contactos">Contactos</a></li>
       </ul>
-      <button class="toggle-btn" onclick="toggleMode()" title="Cambiar modo claro/oscuro">
+      <button class="toggle-btn" onclick="toggleMode()" title="Cambiar modo">
         <svg id="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <svg id="icon-sun"  viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="badge"><div class="badge-dot"></div>Tu espacio como Autolabber</div>
-    <h1 class="hero-title">Todo lo que<br>necesitas, <em>en un<br>solo lugar.</em></h1>
-    <p class="hero-sub">Consulta tus vacaciones, revisa políticas, encuentra fechas importantes y contacta al equipo correcto — sin dar vueltas.</p>
-    <div class="hero-actions">
-      <button class="btn-primary" onclick="scrollTo('vacaciones')">Consultar mis vacaciones</button>
-      <button class="btn-secondary" onclick="scrollTo('politicas')">Ver políticas →</button>
-    </div>
-    <div class="hero-cards">
-      <div class="hcard" onclick="scrollTo('vacaciones')">
-        <div class="hcard-icon">
-          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <div class="hcard-label">Consulta rápida</div>
-        <div class="hcard-title">Mis días de vacaciones</div>
-      </div>
-      <div class="hcard" onclick="scrollTo('politicas')">
-        <div class="hcard-icon">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        </div>
-        <div class="hcard-label">Documentos</div>
-        <div class="hcard-title">Reglamento y políticas</div>
-      </div>
-      <div class="hcard" onclick="scrollTo('contactos')">
-        <div class="hcard-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        </div>
-        <div class="hcard-label">Equipo</div>
-        <div class="hcard-title">Directorio de contactos</div>
-      </div>
-      <div class="hcard" onclick="scrollTo('fechas')">
-        <div class="hcard-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <div class="hcard-label">Fechas</div>
-        <div class="hcard-title">Festivos y nómina</div>
-      </div>
-    </div>
-  </section>
+  <!-- ══════════════════════════════════════ -->
+  <!-- PANTALLA 1: LOGIN                      -->
+  <!-- ══════════════════════════════════════ -->
+  <div id="screen-login" class="screen active">
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-badge"><div class="login-badge-dot"></div>Acceso para Autolabbers</div>
+        <h1 class="login-title">Bienvenido al Hub</h1>
+        <p class="login-sub">Ingresa tu número de documento para acceder a tu espacio personalizado.</p>
 
-  <!-- SECCIÓN VACACIONES -->
-  <section class="section" id="vacaciones">
-    <div class="section-card">
-      <div class="section-label">Consulta rápida</div>
-      <h2 class="section-title">Mis días de vacaciones</h2>
-      <p class="section-sub">Ingresa tu documento para ver tu saldo disponible.</p>
-
-      <!-- PANTALLA LOGIN -->
-      <div id="vac-login" class="screen active">
         <div class="seg">
-          <button class="seg-btn active" id="btn-mx" onclick="selectPais('MX')">🇲🇽 México (CURP)</button>
-          <button class="seg-btn"        id="btn-co" onclick="selectPais('CO')">🇨🇴 Colombia (CC)</button>
+          <button class="seg-btn active" id="btn-mx" onclick="selectTipoDoc('MX')">🇲🇽 CURP</button>
+          <button class="seg-btn"        id="btn-co" onclick="selectTipoDoc('CO')">🇨🇴 CC / CE / DNI</button>
         </div>
-        <div class="field-label" id="field-label">CURP</div>
-        <input type="text" class="field-input" id="doc-input"
+
+        <div class="field-label" id="login-field-label">CURP</div>
+        <input type="text" class="field-input" id="login-input"
           placeholder="Ej. GOML850101HDFNRN02" maxlength="18"
           autocomplete="off" autocapitalize="characters"
-          oninput="onInput(this)"
-          onkeydown="if(event.key==='Enter') buscar()" />
-        <div class="error-box" id="error-box"></div>
-        <button class="btn-buscar" id="btn-buscar" onclick="buscar()">Ver mis días disponibles</button>
-        <p class="vac-note">Tu información es privada. Solo tú puedes ver tus datos.</p>
-      </div>
+          oninput="onLoginInput(this)"
+          onkeydown="if(event.key==='Enter') doLogin()" />
 
-      <!-- PANTALLA RESULTADO -->
-      <div id="vac-result" class="screen">
-        <div class="result-header">
-          <div class="avatar" id="res-avatar">--</div>
-          <div>
-            <div class="res-name" id="res-name">—</div>
-            <div class="res-sub"  id="res-sub">—</div>
-          </div>
-        </div>
-        <div class="vac-grid">
-          <div class="vac-card highlight" id="card-saldo">
-            <div class="vac-label">Días disponibles</div>
-            <div class="vac-num" id="res-saldo">—</div>
-            <div class="vac-unit">días hábiles</div>
-          </div>
-          <div class="vac-card">
-            <div class="vac-label">Días tomados</div>
-            <div class="vac-num" id="res-consumidos">—</div>
-            <div class="vac-unit">acumulados</div>
-          </div>
-        </div>
-        <hr/>
-        <div class="detail-row"><span>Fecha de ingreso</span><span id="res-fecha">—</span></div>
-        <div class="detail-row"><span>Antigüedad</span><span id="res-antiguedad">—</span></div>
-        <div class="detail-row"><span>Cargo</span><span id="res-cargo">—</span></div>
-        <button class="btn-back" onclick="volver()">← Nueva consulta</button>
-      </div>
+        <div class="error-box" id="login-error"></div>
 
+        <button class="btn-primary" id="btn-login" onclick="doLogin()">Ingresar al Hub</button>
+        <p class="login-note">Tu información es privada. Solo tú puedes ver tus datos.</p>
+      </div>
     </div>
-  </section>
+  </div>
 
-  <footer class="footer">
-    ¿Dudas? Escribe a <a href="mailto:talento@autolab.mx">talento@autolab.mx</a>
-  </footer>
+  <!-- ══════════════════════════════════════ -->
+  <!-- PANTALLA 2: ELEGIR HUB (solo AMBOS)   -->
+  <!-- ══════════════════════════════════════ -->
+  <div id="screen-choice" class="screen">
+    <div class="choice-wrap">
+      <div class="choice-card">
+        <p class="choice-greeting" id="choice-greeting">Hola</p>
+        <h2 class="choice-title">¿A qué hub quieres entrar?</h2>
+        <p class="choice-sub">Tienes acceso a los dos. Elige el que necesitas — puedes cambiar cuando quieras.</p>
+        <div class="choice-grid">
+          <button class="choice-btn" onclick="entrarHub('MX')">
+            <span class="choice-flag">🇲🇽</span>
+            <span class="choice-country">México</span>
+            <span class="choice-desc">Vacaciones, reglamento y fechas clave MX</span>
+          </button>
+          <button class="choice-btn" onclick="entrarHub('CO')">
+            <span class="choice-flag">🇨🇴</span>
+            <span class="choice-country">Colombia</span>
+            <span class="choice-desc">Vacaciones, reglamento y fechas clave CO</span>
+          </button>
+        </div>
+        <button class="btn-logout" onclick="cerrarSesion()">← Salir</button>
+      </div>
+    </div>
+  </div>
 
-</div>
+  <!-- ══════════════════════════════════════ -->
+  <!-- PANTALLA 3: HUB                        -->
+  <!-- ══════════════════════════════════════ -->
+  <div id="screen-hub" class="screen">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="badge"><div class="badge-dot"></div><span id="hub-badge-text">Tu espacio como Autolabber</span></div>
+      <h1 class="hero-title">Todo lo que<br>necesitas, <em>en un<br>solo lugar.</em></h1>
+      <p class="hero-sub">Consulta tus vacaciones, revisa políticas, encuentra fechas importantes y contacta al equipo correcto — sin dar vueltas.</p>
+      <div class="hero-actions">
+        <button class="btn-green"   onclick="scrollToId('vacaciones')">Ver mis vacaciones</button>
+        <button class="btn-outline" onclick="scrollToId('politicas')">Ver políticas →</button>
+      </div>
+      <div class="hero-cards">
+        <div class="hcard" onclick="scrollToId('vacaciones')">
+          <div class="hcard-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="hcard-label">Consulta rápida</div>
+          <div class="hcard-title">Mis días de vacaciones</div>
+        </div>
+        <div class="hcard" onclick="scrollToId('politicas')">
+          <div class="hcard-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <div class="hcard-label">Documentos</div>
+          <div class="hcard-title">Reglamento y políticas</div>
+        </div>
+        <div class="hcard" onclick="scrollToId('contactos')">
+          <div class="hcard-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+          <div class="hcard-label">Equipo</div>
+          <div class="hcard-title">Directorio de contactos</div>
+        </div>
+        <div class="hcard" onclick="scrollToId('fechas')">
+          <div class="hcard-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="hcard-label">Fechas</div>
+          <div class="hcard-title">Festivos y nómina</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VACACIONES -->
+    <section class="section" id="vacaciones">
+      <div class="section-card">
+        <div class="section-label">Consulta rápida</div>
+        <h2 class="section-title">Mis días de vacaciones</h2>
+        <p class="section-sub" id="vac-sub">Cargando tu información…</p>
+        <div id="vac-content"></div>
+      </div>
+    </section>
+
+    <!-- POLÍTICAS (placeholder, se completa después) -->
+    <section class="section" id="politicas">
+      <div class="section-card">
+        <div class="section-label">Documentos</div>
+        <h2 class="section-title">Reglamento y políticas</h2>
+        <p class="section-sub" id="pol-sub">Accede a los documentos de tu país.</p>
+        <div id="pol-content">
+          <!-- Se llenará con los links de Drive según el hub -->
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      ¿Dudas? Escribe a <a href="mailto:rrhh@autolab.com">rrhh@autolab.com</a>
+      &nbsp;·&nbsp;
+      <a href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
+      &nbsp;·&nbsp;
+      <a href="#" id="footer-switch" onclick="switchHub(); return false;" style="display:none">Cambiar hub</a>
+    </footer>
+
+  </div><!-- /screen-hub -->
+
+</div><!-- /page -->
 
 <script>
-  // ─────────────────────────────────────────
-  // ⚙️  PEGA AQUÍ LA URL DE TU APPS SCRIPT
-  // ─────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────
+  // ⚙️  CONFIGURACIÓN — edita estos valores
+  // ─────────────────────────────────────────────────────────
   var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTmb9LQYdb1wEtz8VyqNEG4tM4fVsJxsN5VRGYOqUUqCBTTu2lh2p_CrQNlwiLwDqyMw/exec";
 
-  // ── Toggle claro / oscuro ──
+  // Links de Drive para cada país (reemplaza con tus URLs reales)
+  var DOCS = {
+    MX: [
+      { titulo: "Reglamento Interno de Trabajo México", url: "TU_LINK_DRIVE_MX_REGLAMENTO" },
+      { titulo: "Política de Vacaciones México",        url: "https://docs.google.com/document/d/10sgt9uoiVuuf5T3y1IXwnv2naGCAooqmeUCVNyA9mxo/edit?usp=sharing" }
+    ],
+    CO: [
+      { titulo: "Reglamento Interno de Trabajo Colombia", url: "TU_LINK_DRIVE_CO_REGLAMENTO" },
+      { titulo: "Política de Vacaciones Colombia",        url: "TU_LINK_DRIVE_CO_VACACIONES" }
+    ]
+  };
+  // ─────────────────────────────────────────────────────────
+
+  var sesion = { doc: null, nombre: null, acceso: null, hubActual: null };
+
+  // ── Toggle claro/oscuro ──
   var isDark = true;
   function toggleMode() {
     isDark = !isDark;
@@ -409,90 +464,188 @@
     if (saved === "light") { isDark = false; document.body.className = "light"; document.getElementById("icon-moon").style.display="none"; document.getElementById("icon-sun").style.display="block"; }
   } catch(e){}
 
-  // ── Scroll suave ──
-  function scrollTo(id) {
-    var el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  // ── Selector de país ──
-  var pais = "MX";
-  function selectPais(p) {
-    pais = p;
-    document.getElementById("btn-mx").classList.toggle("active", p === "MX");
-    document.getElementById("btn-co").classList.toggle("active", p === "CO");
-    var input = document.getElementById("doc-input");
-    var label = document.getElementById("field-label");
-    if (p === "MX") {
+  // ── Selector tipo doc en login ──
+  var tipoDoc = "MX";
+  function selectTipoDoc(t) {
+    tipoDoc = t;
+    document.getElementById("btn-mx").classList.toggle("active", t === "MX");
+    document.getElementById("btn-co").classList.toggle("active", t === "CO");
+    var input = document.getElementById("login-input");
+    var label = document.getElementById("login-field-label");
+    if (t === "MX") {
       label.textContent = "CURP";
       input.placeholder = "Ej. GOML850101HDFNRN02";
       input.maxLength = 18;
     } else {
-      label.textContent = "Cédula de ciudadanía";
+      label.textContent = "Cédula / CE / DNI";
       input.placeholder = "Ej. 1032456789";
       input.maxLength = 12;
     }
     input.value = "";
-    ocultarError();
+    ocultarLoginError();
   }
 
-  function onInput(el) {
-    if (pais === "MX") el.value = el.value.toUpperCase().replace(/[^A-Z0-9]/g,"");
-    else               el.value = el.value.replace(/[^0-9]/g,"");
-    ocultarError();
+  function onLoginInput(el) {
+    if (tipoDoc === "MX") el.value = el.value.toUpperCase().replace(/[^A-Z0-9]/g,"");
+    else                  el.value = el.value.replace(/[^0-9]/g,"");
+    ocultarLoginError();
   }
 
-  function ocultarError() {
-    var eb = document.getElementById("error-box");
-    eb.style.display = "none"; eb.textContent = "";
+  function ocultarLoginError() {
+    var eb = document.getElementById("login-error");
+    eb.style.display = "none"; eb.innerHTML = "";
   }
-  function mostrarError(msg) {
-    var eb = document.getElementById("error-box");
-    eb.textContent = msg; eb.style.display = "block";
+  function mostrarLoginError(msg) {
+    var eb = document.getElementById("login-error");
+    eb.innerHTML = msg; eb.style.display = "block";
   }
 
-  function buscar() {
-    var doc = document.getElementById("doc-input").value.trim();
-    if (!doc || doc.length < 5) { mostrarError("Ingresa un documento válido."); return; }
-    ocultarError();
-    var btn = document.getElementById("btn-buscar");
+  // ── Login ──
+  function doLogin() {
+    var doc = document.getElementById("login-input").value.trim();
+    if (!doc || doc.length < 5) { mostrarLoginError("Ingresa un documento válido."); return; }
+    ocultarLoginError();
+    var btn = document.getElementById("btn-login");
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Consultando…';
+    btn.innerHTML = '<span class="spinner"></span>Verificando…';
+    jsonp(APPS_SCRIPT_URL + "?accion=login&doc=" + encodeURIComponent(doc), "onLoginResult");
+    sesion.doc = doc;
+  }
+
+  function onLoginResult(data) {
+    var btn = document.getElementById("btn-login");
+    btn.disabled = false; btn.innerHTML = "Ingresar al Hub";
+    if (!data.ok) {
+      mostrarLoginError(data.error || "Error desconocido.");
+      sesion.doc = null;
+      return;
+    }
+    sesion.nombre = data.nombre;
+    sesion.acceso = data.acceso;
+
+    if (data.acceso === "AMBOS") {
+      mostrarPantalla("choice");
+      document.getElementById("choice-greeting").textContent = "Hola, " + primerNombre(data.nombre) + " 👋";
+    } else {
+      entrarHub(data.acceso);
+    }
+  }
+
+  // ── Elegir hub (solo para AMBOS) ──
+  function entrarHub(hub) {
+    sesion.hubActual = hub;
+    mostrarPantalla("hub");
+    document.getElementById("nav-links").style.display = "flex";
+
+    var pais = hub === "MX" ? "🇲🇽 México" : "🇨🇴 Colombia";
+    document.getElementById("hub-badge-text").textContent = "Hub " + pais + " · " + primerNombre(sesion.nombre);
+
+    if (sesion.acceso === "AMBOS") {
+      document.getElementById("footer-switch").style.display = "inline";
+    }
+
+    cargarVacaciones();
+    cargarPoliticas(hub);
+  }
+
+  function switchHub() {
+    mostrarPantalla("choice");
+    document.getElementById("choice-greeting").textContent = "Hola, " + primerNombre(sesion.nombre) + " 👋";
+    document.getElementById("nav-links").style.display = "none";
+  }
+
+  // ── Vacaciones ──
+  function cargarVacaciones() {
+    document.getElementById("vac-sub").textContent = "Cargando tu información…";
+    document.getElementById("vac-content").innerHTML = '<p class="vac-loading"><span class="spinner" style="border-top-color:var(--green);border-color:var(--border-md);"></span>Un momento…</p>';
+    jsonp(APPS_SCRIPT_URL + "?accion=vacaciones&doc=" + encodeURIComponent(sesion.doc), "onVacResult");
+  }
+
+  function onVacResult(data) {
+    var content = document.getElementById("vac-content");
+    document.getElementById("vac-sub").textContent = "";
+
+    if (!data.ok && data.sinVacaciones) {
+      content.innerHTML = '<p class="vac-no-aplica">Este beneficio no aplica para tu tipo de contrato. Si tienes dudas escríbenos a <a href="mailto:rrhh@autolab.com" style="color:var(--green)">rrhh@autolab.com</a></p>';
+      return;
+    }
+    if (!data.ok) {
+      content.innerHTML = '<p class="vac-no-aplica">' + (data.error || "No pudimos cargar tu información.") + '</p>';
+      return;
+    }
+
+    var saldo = data.saldo;
+    var saldoStr = saldo % 1 === 0 ? saldo : saldo.toFixed(2);
+    var cardClass = saldo < 0 ? "vac-card negative" : "vac-card highlight";
+
+    var html = '<div class="result-header">';
+    html += '<div class="avatar">' + iniciales(sesion.nombre) + '</div>';
+    html += '<div><div class="res-name">' + sesion.nombre + '</div>';
+    html += '<div class="res-sub">' + data.posicion + '</div></div></div>';
+    html += '<div class="vac-grid">';
+    html += '<div class="' + cardClass + '"><div class="vac-label">Días disponibles</div><div class="vac-num">' + saldoStr + '</div><div class="vac-unit">días hábiles</div></div>';
+    html += '<div class="vac-card"><div class="vac-label">Días tomados</div><div class="vac-num">' + data.consumidos + '</div><div class="vac-unit">acumulados</div></div>';
+    html += '</div><hr/>';
+    html += '<div class="detail-row"><span>Fecha de ingreso</span><span>' + data.fechaIngreso + '</span></div>';
+    html += '<div class="detail-row"><span>Antigüedad</span><span>' + data.antiguedad + '</span></div>';
+    html += '<div class="detail-row"><span>Cargo</span><span>' + data.posicion + '</span></div>';
+    content.innerHTML = html;
+  }
+
+  // ── Políticas ──
+  function cargarPoliticas(hub) {
+    var docs = DOCS[hub] || [];
+    var html = "";
+    docs.forEach(function(doc) {
+      html += '<a href="' + doc.url + '" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:0.5px solid var(--border);text-decoration:none;">';
+      html += '<div style="width:36px;height:36px;background:var(--green-light);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">';
+      html += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + '#2DBD6E' + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>';
+      html += '<span style="font-size:14px;font-weight:500;color:var(--text);">' + doc.titulo + '</span>';
+      html += '<span style="margin-left:auto;font-size:12px;color:var(--green);">Abrir →</span>';
+      html += '</a>';
+    });
+    document.getElementById("pol-content").innerHTML = html;
+  }
+
+  // ── Cerrar sesión ──
+  function cerrarSesion() {
+    sesion = { doc: null, nombre: null, acceso: null, hubActual: null };
+    document.getElementById("nav-links").style.display = "none";
+    document.getElementById("login-input").value = "";
+    ocultarLoginError();
+    mostrarPantalla("login");
+  }
+
+  // ── Helpers ──
+  function mostrarPantalla(id) {
+    ["login","choice","hub"].forEach(function(s) {
+      document.getElementById("screen-" + s).classList.remove("active");
+    });
+    document.getElementById("screen-" + id).classList.add("active");
+  }
+
+  function scrollToId(id) {
+    var el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function primerNombre(nombre) {
+    return nombre ? nombre.split(" ")[0] : "";
+  }
+
+  function iniciales(nombre) {
+    if (!nombre) return "--";
+    var p = nombre.split(" ");
+    return (p[0][0] + (p[1] ? p[1][0] : "")).toUpperCase();
+  }
+
+  function jsonp(url, callback) {
     var script = document.createElement("script");
-    script.src = APPS_SCRIPT_URL + "?callback=onResult&doc=" + encodeURIComponent(doc);
+    script.src = url + "&callback=" + callback;
     script.onerror = function() {
-      btn.disabled = false; btn.innerHTML = "Ver mis días disponibles";
-      mostrarError("No se pudo conectar. Verifica tu conexión e intenta de nuevo.");
+      window[callback]({ ok: false, error: "No se pudo conectar. Verifica tu conexión e intenta de nuevo." });
     };
     document.body.appendChild(script);
-  }
-
-  function onResult(data) {
-    var btn = document.getElementById("btn-buscar");
-    btn.disabled = false; btn.innerHTML = "Ver mis días disponibles";
-    if (!data.ok) { mostrarError(data.error || "Error desconocido."); return; }
-    var partes = data.nombre.split(" ");
-    document.getElementById("res-avatar").textContent = (partes[0][0] + (partes[1] ? partes[1][0] : "")).toUpperCase();
-    document.getElementById("res-name").textContent       = data.nombre;
-    document.getElementById("res-sub").textContent        = data.posicion + " · " + data.pais;
-    document.getElementById("res-fecha").textContent      = data.fechaIngreso;
-    document.getElementById("res-antiguedad").textContent = data.antiguedad;
-    document.getElementById("res-cargo").textContent      = data.posicion;
-    var saldo = data.saldo;
-    document.getElementById("res-saldo").textContent      = saldo % 1 === 0 ? saldo : saldo.toFixed(2);
-    document.getElementById("res-consumidos").textContent = data.consumidos;
-    var cardSaldo = document.getElementById("card-saldo");
-    if (saldo < 0) { cardSaldo.classList.remove("highlight"); cardSaldo.classList.add("negative"); }
-    else           { cardSaldo.classList.add("highlight");    cardSaldo.classList.remove("negative"); }
-    document.getElementById("vac-login").classList.remove("active");
-    document.getElementById("vac-result").classList.add("active");
-  }
-
-  function volver() {
-    document.getElementById("vac-result").classList.remove("active");
-    document.getElementById("vac-login").classList.add("active");
-    document.getElementById("doc-input").value = "";
-    ocultarError();
   }
 </script>
 </body>
