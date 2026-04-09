@@ -346,7 +346,7 @@
   <!-- NAV -->
   <nav>
     <div class="logo-row">
-      <img src="__logo-04 (2).png" alt="Autolab" class="logo-img" />
+      <img src="logo-04 (2).png" alt="Autolab" class="logo-img" />
       <span class="logo-text">Autolabbers <span>Hub</span></span>
     </div>
     <div class="nav-right">
@@ -427,7 +427,7 @@
     <div id="hub-sections"></div>
 
     <footer class="footer">
-      ¿Dudas? Escribe a <a href="mailto:rrhh@autolab.com">rrhh@autolab.com</a>
+      ¿Dudas? Escribe a <a href="mailto:talento@autolab.mx">talento@autolab.mx</a>
       &nbsp;·&nbsp;
       <a href="#" onclick="cerrarSesion();return false;">Cerrar sesión</a>
       <span id="footer-switch-wrap" style="display:none">
@@ -537,8 +537,8 @@ var HUB_CONFIG = {
     // Para agregar: copia un objeto { nombre, rol, email, slack } y agrégalo.
     // slack es opcional — si no aplica, ponlo como null.
     contactos: [
-      { nombre: "Recursos Humanos", rol: "Vacaciones, permisos y nómina", email: "rrhh@autolab.com",    slack: null          },
-      { nombre: "IT / Soporte",     rol: "Accesos, equipos y sistemas",   email: "it@autolab.com",      slack: "#soporte-it"  }
+      { nombre: "Recursos Humanos", rol: "Vacaciones, permisos y nómina", email: "talento@autolab.mx",    slack: null          },
+      { nombre: "IT / Soporte",     rol: "Accesos, equipos y sistemas",   email: "talento@autolab.mx",      slack: "#soporte-it"  }
     ]
   },
 
@@ -852,7 +852,7 @@ function onVacResult(data) {
   if (!content) return;
 
   if (!data.ok && data.sinVacaciones) {
-    content.innerHTML = '<p class="vac-no-aplica">Este beneficio no aplica para tu tipo de contrato. ¿Tienes dudas? Escríbenos a <a href="mailto:rrhh@autolab.com">rrhh@autolab.com</a></p>';
+    content.innerHTML = '<p class="vac-no-aplica">Este beneficio no aplica para tu tipo de contrato. ¿Tienes dudas? Escríbenos a <a href="mailto:talento@autolab.mx">talento@autolab.mx</a></p>';
     return;
   }
   if (!data.ok) {
