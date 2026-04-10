@@ -813,7 +813,7 @@ function renderizarSecciones(cfg) {
 
   // MI INFORMACIÓN (vacaciones + nómina) — solo si está activa
   var esServicesContract = (sesion.tipoContrato || "").toLowerCase().indexOf("services") !== -1;
-  if (cfg.secciones.miInfo) {
+  if (cfg.secciones.miInfo && !esServicesContract) {
     var miInfoHTML =
       // Tabs: solo mostrar si NO es services contract
       (!esServicesContract ?
@@ -848,7 +848,7 @@ function renderizarSecciones(cfg) {
   }
 
   // VACACIONES standalone (para CO u otros países sin miInfo)
-  if (!cfg.secciones.miInfo && cfg.secciones.vacaciones) {
+  if (!cfg.secciones.miInfo && cfg.secciones.vacaciones && !esServicesContract) {
     html += seccionWrapper("vacaciones", "Consulta rápida", "Mis días de vacaciones",
       "Cargando tu información…",
       '<div id="vac-content"><p class="vac-loading"><span class="spinner" style="border-top-color:var(--green);border-color:var(--border-md);"></span>Un momento…</p></div>');
@@ -1182,7 +1182,7 @@ function scrollToId(id) {
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function primerNombre(n) { return n ? n.split(" ")[0] : ""; }
+function primerNombre(n) { if (!n) return ""; var p = n.trim().split(/\s+/); return p[p.length - 1]; }
 
 function iniciales(n) {
   if (!n) return "--";
