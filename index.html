@@ -327,7 +327,7 @@
   .nomina-cta:hover { opacity: 0.88; }
 
   /* ── CONTACTOS ── */
-  .contactos-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+  .contactos-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
   .contacto-card  {
     background: var(--bg-card); border: 0.5px solid var(--border);
     border-radius: 12px; padding: 1.25rem;
@@ -617,7 +617,51 @@ var HUB_CONFIG = {
 //  ESTADO DE SESIÓN
 // ═══════════════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════════════
+//  SESIÓN PERSISTENTE (8 horas)
+// ═══════════════════════════════════════════════════════════════════
+
+var SESION_HORAS = 8;
+
+function guardarSesion(data) {
+  try {
+    var payload = Object.assign({}, data);
+    payload._expira = Date.now() + SESION_HORAS * 60 * 60 * 1000;
+    localStorage.setItem("al_sesion", JSON.stringify(payload));
+  } catch(e){}
+}
+
+function cargarSesionGuardada() {
+  try {
+    var raw = localStorage.getItem("al_sesion");
+    if (!raw) return null;
+    var data = JSON.parse(raw);
+    if (Date.now() > data._expira) { localStorage.removeItem("al_sesion"); return null; }
+    return data;
+  } catch(e){ return null; }
+}
+
+function borrarSesion() {
+  try { localStorage.removeItem("al_sesion"); } catch(e){}
+}
+
 var sesion = { doc: null, nombre: null, acceso: null, hubActual: null };
+
+// Restaurar sesión si existe y no ha expirado
+(function() {
+  var guardada = cargarSesionGuardada();
+  if (!guardada || !guardada.doc) return;
+  sesion = guardada;
+  // Esperar a que el DOM esté listo antes de renderizar
+  window.addEventListener("DOMContentLoaded", function() {
+    if (sesion.acceso === "AMBOS") {
+      mostrarPantalla("choice");
+      document.getElementById("choice-greeting").textContent = "Hola, " + primerNombre(sesion.nombre) + " 👋";
+    } else {
+      entrarHub(sesion.acceso);
+    }
+  });
+})();
 
 // ═══════════════════════════════════════════════════════════════════
 //  MODO CLARO / OSCURO
@@ -702,6 +746,7 @@ function onLoginResult(data) {
   }
   sesion.nombre = data.nombre;
   sesion.acceso = data.acceso;
+  guardarSesion(sesion);
   if (data.acceso === "AMBOS") {
     mostrarPantalla("choice");
     document.getElementById("choice-greeting").textContent = "Hola, " + primerNombre(data.nombre) + " 👋";
@@ -981,6 +1026,7 @@ function onContactosResult(data) {
 
 function cerrarSesion() {
   sesion = { doc: null, nombre: null, acceso: null, hubActual: null };
+  borrarSesion();
   document.getElementById("nav-links").style.display = "none";
   document.getElementById("login-input").value = "";
   ocultarLoginError();
