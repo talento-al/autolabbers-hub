@@ -1053,6 +1053,12 @@ function calcularFestivosMX() {
 
   // Regla del lunes: primer lunes del mes en o después del día base
   function primerLunes(anio, mes, diaBase) {
+   function tercerLunes(anio, mes) {
+  var d = new Date(anio, mes, 1);
+  var dow = d.getDay();
+  var primerL = dow <= 1 ? 1 + (1 - dow) : 1 + (8 - dow);
+  return new Date(anio, mes, primerL + 14);
+}
     var d = new Date(anio, mes, diaBase);
     var dow = d.getDay(); // 0=dom,1=lun...
     if (dow === 1) return d;
@@ -1067,7 +1073,7 @@ function calcularFestivosMX() {
     { fecha: primerLunes(anio, 2, 21), nombre: "Natalicio de Benito Juárez" },
     { fecha: new Date(anio, 4, 1),  nombre: "Día del Trabajo" },
     { fecha: new Date(anio, 8, 16), nombre: "Independencia de México" },
-    { fecha: primerLunes(anio, 10, 20), nombre: "Revolución Mexicana" },
+    { fecha: tercerLunes(anio, 10), nombre: "Revolución Mexicana" },
     { fecha: new Date(anio, 11, 25), nombre: "Navidad" }
   ];
 
