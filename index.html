@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" type="image/x-icon" href="favicon.ico"/>
 <title>Autolabbers Hub</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -560,7 +561,7 @@ var HUB_CONFIG = {
     // slack es opcional — si no aplica, ponlo como null.
     contactos: [
       { nombre: "Recursos Humanos", rol: "Vacaciones, permisos y nómina", email: "talento@autolab.mx",    slack: null          },
-      { nombre: "IT / Soporte",     rol: "Accesos, equipos y sistemas",   email: "it@autolab.mx",      slack: "#soporte-it"  }
+      { nombre: "IT / Soporte",     rol: "Accesos, equipos y sistemas",   email: "it@autolab.com",      slack: "#soporte-it"  }
     ]
   },
 
@@ -582,7 +583,7 @@ var HUB_CONFIG = {
       vacaciones: true,
       biblioteca: true,
       fechas:     false,   // aún no disponible para CO
-      contactos:  false    // aún no disponible para CO
+      contactos:  true     // directorio dinámico desde Sheet
     },
 
     accesosRapidos: [
@@ -726,7 +727,8 @@ function entrarHub(hub) {
   document.getElementById("footer-switch-wrap").style.display = sesion.acceso === "AMBOS" ? "inline" : "none";
 
   // Cargar datos dinámicos
-  if (cfg.secciones.vacaciones) cargarVacaciones();
+  if (cfg.secciones.miInfo || cfg.secciones.vacaciones) cargarVacaciones();
+  if (cfg.secciones.contactos) cargarContactos(hub);
 }
 
 function switchHub() {
@@ -851,29 +853,11 @@ function renderizarSecciones(cfg) {
       "Días festivos y fechas importantes para este año.", fechasHTML);
   }
 
-  // CONTACTOS
+  // CONTACTOS — cargados dinámicamente desde el Sheet
   if (cfg.secciones.contactos) {
-    var contactosHTML = "";
-    if (cfg.contactos && cfg.contactos.length) {
-      contactosHTML += '<div class="contactos-grid">';
-      cfg.contactos.forEach(function(c) {
-        var ini = c.nombre.split(" ").map(function(p){ return p[0]; }).join("").substring(0,2).toUpperCase();
-        contactosHTML +=
-          '<div class="contacto-card">' +
-            '<div class="contacto-avatar">' + ini + '</div>' +
-            '<div><div class="contacto-nombre">' + c.nombre + '</div><div class="contacto-rol">' + c.rol + '</div></div>' +
-            '<div class="contacto-links">' +
-              (c.email ? '<a class="contacto-link" href="mailto:' + c.email + '">' + c.email + '</a>' : '') +
-              (c.slack ? '<a class="contacto-link" href="#">' + c.slack + '</a>' : '') +
-            '</div>' +
-          '</div>';
-      });
-      contactosHTML += '</div>';
-    } else {
-      contactosHTML = '<div class="coming-soon">El directorio de contactos estará disponible pronto.</div>';
-    }
     html += seccionWrapper("contactos", "Equipo", "Directorio de contactos",
-      "¿A quién escribirle para cada tema?", contactosHTML);
+      "Encuentra a tus compañeros y escríbeles directo.",
+      '<div id="contactos-content"><p class="vac-loading"><span class="spinner" style="border-top-color:var(--green);border-color:var(--border-md);"></span>Cargando directorio…</p></div>');
   }
 
   document.getElementById("hub-sections").innerHTML = html;
@@ -939,6 +923,56 @@ function onVacResult(data) {
     '<div class="detail-row"><span>Fecha de ingreso</span><span>' + data.fechaIngreso + '</span></div>' +
     '<div class="detail-row"><span>Antigüedad</span><span>' + data.antiguedad + '</span></div>' +
     '<div class="detail-row"><span>Cargo</span><span>' + data.posicion + '</span></div>';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CONTACTOS (dinámicos desde Sheet)
+// ═══════════════════════════════════════════════════════════════════
+
+function cargarContactos(hub) {
+  jsonp(APPS_SCRIPT_URL + "?accion=contactos&pais=" + hub, "onContactosResult");
+}
+
+function onContactosResult(data) {
+  var el = document.getElementById("contactos-content");
+  if (!el) return;
+
+  if (!data.ok || !data.contactos || !data.contactos.length) {
+    el.innerHTML = '<div class="coming-soon">El directorio estará disponible pronto. Escríbenos a <a href="mailto:talento@autolab.mx" style="color:var(--green)">talento@autolab.mx</a></div>';
+    return;
+  }
+
+  // Agrupar por área
+  var areas = {};
+  data.contactos.forEach(function(c) {
+    var area = c.area || "General";
+    if (!areas[area]) areas[area] = [];
+    areas[area].push(c);
+  });
+
+  var html = "";
+  Object.keys(areas).sort().forEach(function(area) {
+    html += '<div style="margin-bottom:1.75rem;">';
+    html += '<div class="bib-category-title" style="margin-bottom:0.875rem;">' + area + '</div>';
+    html += '<div class="contactos-grid">';
+    areas[area].forEach(function(c) {
+      var ini = c.nombre.split(" ").filter(Boolean).slice(0,2).map(function(p){ return p[0]; }).join("").toUpperCase();
+      html +=
+        '<div class="contacto-card">' +
+          '<div class="contacto-avatar">' + ini + '</div>' +
+          '<div>' +
+            '<div class="contacto-nombre">' + c.nombre + '</div>' +
+            '<div class="contacto-rol">' + c.posicion + '</div>' +
+          '</div>' +
+          '<div class="contacto-links">' +
+            (c.correo ? '<a class="contacto-link" href="mailto:' + c.correo + '">' + c.correo + '</a>' : '') +
+          '</div>' +
+        '</div>';
+    });
+    html += '</div></div>';
+  });
+
+  el.innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════════════════════════
