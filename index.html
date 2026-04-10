@@ -635,7 +635,7 @@ function borrarSesion() {
   try { localStorage.removeItem("al_sesion"); } catch(e){}
 }
 
-var sesion = { doc: null, nombre: null, acceso: null, hubActual: null };
+var sesion = { doc: null, nombre: null, acceso: null, hubActual: null, tipoContrato: "" };
 
 // Restaurar sesión si existe y no ha expirado
 (function() {
@@ -734,8 +734,9 @@ function onLoginResult(data) {
     sesion.doc = null;
     return;
   }
-  sesion.nombre = data.nombre;
-  sesion.acceso = data.acceso;
+  sesion.nombre       = data.nombre;
+  sesion.acceso       = data.acceso;
+  sesion.tipoContrato = data.tipoContrato || "";
   guardarSesion(sesion);
   if (data.acceso === "AMBOS") {
     mostrarPantalla("choice");
@@ -762,7 +763,8 @@ function entrarHub(hub) {
   document.getElementById("footer-switch-wrap").style.display = sesion.acceso === "AMBOS" ? "inline" : "none";
 
   // Cargar datos dinámicos
-  if (cfg.secciones.miInfo || cfg.secciones.vacaciones) cargarVacaciones();
+  var esServices = (sesion.tipoContrato || "").toLowerCase().indexOf("services") !== -1;
+  if ((cfg.secciones.miInfo || cfg.secciones.vacaciones) && !esServices) cargarVacaciones();
   if (cfg.secciones.contactos) cargarContactos(hub);
 }
 
@@ -810,20 +812,26 @@ function renderizarSecciones(cfg) {
   var html = "";
 
   // MI INFORMACIÓN (vacaciones + nómina) — solo si está activa
+  var esServicesContract = (sesion.tipoContrato || "").toLowerCase().indexOf("services") !== -1;
   if (cfg.secciones.miInfo) {
     var miInfoHTML =
-      '<div class="miinfo-tabs">' +
-        '<button class="miinfo-tab active" onclick="switchMiInfo(\'vacaciones\')">Días de vacaciones</button>' +
-        '<button class="miinfo-tab"        onclick="switchMiInfo(\'nomina\')">Recibos de nómina</button>' +
-      '</div>' +
+      // Tabs: solo mostrar si NO es services contract
+      (!esServicesContract ?
+        '<div class="miinfo-tabs">' +
+          '<button class="miinfo-tab active" onclick="switchMiInfo(\'vacaciones\')">Días de vacaciones</button>' +
+          '<button class="miinfo-tab"        onclick="switchMiInfo(\'nomina\')">Recibos de nómina</button>' +
+        '</div>' : ''
+      ) +
 
-      // Panel vacaciones
-      '<div class="miinfo-panel active" id="panel-vacaciones">' +
-        '<div id="vac-content"><p class="vac-loading"><span class="spinner" style="border-top-color:var(--green);border-color:var(--border-md);"></span>Un momento…</p></div>' +
-      '</div>' +
+      // Panel vacaciones: solo si NO es services contract
+      (!esServicesContract ?
+        '<div class="miinfo-panel active" id="panel-vacaciones">' +
+          '<div id="vac-content"><p class="vac-loading"><span class="spinner" style="border-top-color:var(--green);border-color:var(--border-md);"></span>Un momento…</p></div>' +
+        '</div>' : ''
+      ) +
 
       // Panel nómina
-      '<div class="miinfo-panel" id="panel-nomina">' +
+      '<div class="miinfo-panel' + (esServicesContract ? ' active' : '') + '" id="panel-nomina">' +
         '<div class="nomina-card">' +
           '<div class="nomina-steps">' +
             '<div class="nomina-step"><div class="nomina-num">1</div><div class="nomina-text">Ingresa a <a href="https://app.runahr.com/login" target="_blank">app.runahr.com/login</a></div></div>' +
@@ -835,8 +843,8 @@ function renderizarSecciones(cfg) {
         '</div>' +
       '</div>';
 
-    html += seccionWrapper("mi-info", "Personal", "Mi información",
-      "Tus días de vacaciones y acceso a tus recibos de nómina.", miInfoHTML);
+    var miInfoSub = esServicesContract ? "Accede a tus recibos de nómina." : "Tus días de vacaciones y acceso a tus recibos de nómina.";
+    html += seccionWrapper("mi-info", "Personal", "Mi información", miInfoSub, miInfoHTML);
   }
 
   // VACACIONES standalone (para CO u otros países sin miInfo)
@@ -1053,12 +1061,6 @@ function calcularFestivosMX() {
 
   // Regla del lunes: primer lunes del mes en o después del día base
   function primerLunes(anio, mes, diaBase) {
-   function tercerLunes(anio, mes) {
-  var d = new Date(anio, mes, 1);
-  var dow = d.getDay();
-  var primerL = dow <= 1 ? 1 + (1 - dow) : 1 + (8 - dow);
-  return new Date(anio, mes, primerL + 14);
-}
     var d = new Date(anio, mes, diaBase);
     var dow = d.getDay(); // 0=dom,1=lun...
     if (dow === 1) return d;
@@ -1073,7 +1075,7 @@ function calcularFestivosMX() {
     { fecha: primerLunes(anio, 2, 21), nombre: "Natalicio de Benito Juárez" },
     { fecha: new Date(anio, 4, 1),  nombre: "Día del Trabajo" },
     { fecha: new Date(anio, 8, 16), nombre: "Independencia de México" },
-    { fecha: tercerLunes(anio, 10), nombre: "Revolución Mexicana" },
+    { fecha: primerLunes(anio, 10, 20), nombre: "Revolución Mexicana" },
     { fecha: new Date(anio, 11, 25), nombre: "Navidad" }
   ];
 
@@ -1132,12 +1134,12 @@ function calcularFechasNomina() {
   var proximas = [];
   var m = mes;
   var a = anio;
-  while (proximas.length < 4) {
+  while (proximas.length < 6) {
     var ultimo = diasEnMes(a, m);
     var dias   = [15, ultimo === 28 ? 28 : (ultimo >= 30 ? 30 : ultimo)];
     dias.forEach(function(d) {
       var fecha = ajustarHabil(new Date(a, m, d));
-      if (fecha >= hoy && proximas.length < 4) {
+      if (fecha >= hoy && proximas.length < 6) {
         proximas.push(formatearPago(fecha));
       }
     });
