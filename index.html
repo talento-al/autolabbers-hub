@@ -4,7 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Autolabbers Hub</title>
- <link rel="icon" href="favicon.ico">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -303,6 +302,29 @@
   .fecha-dia      { font-size: 18px; font-weight: 500; color: var(--green); min-width: 28px; }
   .fecha-nombre   { font-size: 13px; color: var(--text); line-height: 1.4; }
 
+  /* ── MI INFORMACIÓN ── */
+  .miinfo-tabs { display: flex; gap: 8px; margin-bottom: 1.75rem; flex-wrap: wrap; }
+  .miinfo-tab {
+    padding: 8px 18px; border-radius: 100px;
+    border: 0.5px solid var(--border-md); background: transparent;
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .miinfo-tab.active { background: var(--green); color: #fff; border-color: transparent; }
+  .miinfo-panel { display: none; }
+  .miinfo-panel.active { display: block; }
+  .nomina-card { background: var(--bg-card); border-radius: 14px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+  .nomina-steps { display: flex; flex-direction: column; gap: 14px; }
+  .nomina-step { display: flex; align-items: flex-start; gap: 12px; }
+  .nomina-num { width: 24px; height: 24px; border-radius: 50%; background: var(--green-light); color: var(--green); font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .nomina-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+  .nomina-text a { color: var(--green); text-decoration: none; }
+  .nomina-text a:hover { text-decoration: underline; }
+  .nomina-hint { font-size: 13px; color: var(--muted); line-height: 1.6; padding-top: 0.875rem; border-top: 0.5px solid var(--border); }
+  .nomina-hint a { color: var(--green); text-decoration: none; }
+  .nomina-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--green); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; margin-top: 0.25rem; transition: opacity 0.15s; }
+  .nomina-cta:hover { opacity: 0.88; }
+
   /* ── CONTACTOS ── */
   .contactos-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
   .contacto-card  {
@@ -351,7 +373,7 @@
     </div>
     <div class="nav-right">
       <ul class="nav-links" id="nav-links" style="display:none">
-        <li><a href="#" onclick="scrollToId('vacaciones');return false;">Vacaciones</a></li>
+        <li><a href="#" onclick="scrollToId('mi-info');return false;">Mi información</a></li>
         <li><a href="#" onclick="scrollToId('biblioteca');return false;">Biblioteca</a></li>
         <li><a href="#" onclick="scrollToId('fechas');return false;">Fechas clave</a></li>
         <li><a href="#" onclick="scrollToId('contactos');return false;">Contactos</a></li>
@@ -464,7 +486,7 @@ var HUB_CONFIG = {
     // Secciones activas para este país.
     // false = no se renderiza, true = se renderiza.
     secciones: {
-      vacaciones: true,
+      miInfo:     true,   // sección personal: vacaciones + nómina
       biblioteca: true,
       fechas:     true,
       contactos:  true
@@ -472,10 +494,10 @@ var HUB_CONFIG = {
 
     // Accesos rápidos en el hero (máx 4, en orden).
     accesosRapidos: [
-      { label: "Consulta rápida", titulo: "Mis vacaciones",        seccion: "vacaciones", icono: "calendario" },
-      { label: "Documentos",      titulo: "Reglamento y políticas", seccion: "biblioteca", icono: "documento"  },
-      { label: "Fechas",          titulo: "Festivos y nómina",      seccion: "fechas",     icono: "reloj"      },
-      { label: "Equipo",          titulo: "Directorio",             seccion: "contactos",  icono: "persona"    }
+      { label: "Personal",   titulo: "Mi información",           seccion: "mi-info",   icono: "persona"    },
+      { label: "Documentos", titulo: "Reglamento y políticas",   seccion: "biblioteca", icono: "documento"  },
+      { label: "Fechas",     titulo: "Festivos y nómina",        seccion: "fechas",     icono: "reloj"      },
+      { label: "Equipo",     titulo: "Directorio",               seccion: "contactos",  icono: "persona"    }
     ],
 
     // Biblioteca documental por categoría.
@@ -538,7 +560,7 @@ var HUB_CONFIG = {
     // slack es opcional — si no aplica, ponlo como null.
     contactos: [
       { nombre: "Recursos Humanos", rol: "Vacaciones, permisos y nómina", email: "talento@autolab.mx",    slack: null          },
-      { nombre: "IT / Soporte",     rol: "Accesos, equipos y sistemas",   email: "talento@autolab.mx",      slack: "#soporte-it"  }
+      { nombre: "IT / Soporte",     rol: "Accesos, equipos y sistemas",   email: "it@autolab.mx",      slack: "#soporte-it"  }
     ]
   },
 
@@ -736,7 +758,7 @@ function renderizarHero(cfg) {
     '<h1 class="hero-title">' + cfg.hero.titulo + '</h1>' +
     '<p class="hero-sub">' + cfg.hero.subtitulo + '</p>' +
     '<div class="hero-actions">' +
-      '<button class="btn-green" onclick="scrollToId(\'vacaciones\')">Ver mis vacaciones</button>' +
+      '<button class="btn-green" onclick="scrollToId(\'mi-info\')">Mi información</button>' +
       '<button class="btn-outline" onclick="scrollToId(\'biblioteca\')">Ver documentos →</button>' +
     '</div>' +
     '<div class="quick-grid">' + accesosHTML + '</div>';
@@ -749,8 +771,38 @@ function renderizarHero(cfg) {
 function renderizarSecciones(cfg) {
   var html = "";
 
-  // VACACIONES
-  if (cfg.secciones.vacaciones) {
+  // MI INFORMACIÓN (vacaciones + nómina) — solo si está activa
+  if (cfg.secciones.miInfo) {
+    var miInfoHTML =
+      '<div class="miinfo-tabs">' +
+        '<button class="miinfo-tab active" onclick="switchMiInfo(\'vacaciones\')">Días de vacaciones</button>' +
+        '<button class="miinfo-tab"        onclick="switchMiInfo(\'nomina\')">Recibos de nómina</button>' +
+      '</div>' +
+
+      // Panel vacaciones
+      '<div class="miinfo-panel active" id="panel-vacaciones">' +
+        '<div id="vac-content"><p class="vac-loading"><span class="spinner" style="border-top-color:var(--green);border-color:var(--border-md);"></span>Un momento…</p></div>' +
+      '</div>' +
+
+      // Panel nómina
+      '<div class="miinfo-panel" id="panel-nomina">' +
+        '<div class="nomina-card">' +
+          '<div class="nomina-steps">' +
+            '<div class="nomina-step"><div class="nomina-num">1</div><div class="nomina-text">Ingresa a <a href="https://app.runahr.com/login" target="_blank">app.runahr.com/login</a></div></div>' +
+            '<div class="nomina-step"><div class="nomina-num">2</div><div class="nomina-text">Usa tu <strong>correo personal</strong> — el mismo con el que activaste tu cuenta en Runa.</div></div>' +
+            '<div class="nomina-step"><div class="nomina-num">3</div><div class="nomina-text">Ingresa la contraseña que creaste al activar tu cuenta.</div></div>' +
+          '</div>' +
+          '<a class="nomina-cta" href="https://app.runahr.com/login" target="_blank">Ir a Runa →</a>' +
+          '<div class="nomina-hint">¿Olvidaste tu contraseña? Puedes restablecerla desde la misma plataforma usando tu correo personal. Si tienes problemas para acceder, escríbenos a <a href="mailto:talento@autolab.mx">talento@autolab.mx</a></div>' +
+        '</div>' +
+      '</div>';
+
+    html += seccionWrapper("mi-info", "Personal", "Mi información",
+      "Tus días de vacaciones y acceso a tus recibos de nómina.", miInfoHTML);
+  }
+
+  // VACACIONES standalone (para CO u otros países sin miInfo)
+  if (!cfg.secciones.miInfo && cfg.secciones.vacaciones) {
     html += seccionWrapper("vacaciones", "Consulta rápida", "Mis días de vacaciones",
       "Cargando tu información…",
       '<div id="vac-content"><p class="vac-loading"><span class="spinner" style="border-top-color:var(--green);border-color:var(--border-md);"></span>Un momento…</p></div>');
@@ -842,6 +894,16 @@ function seccionWrapper(id, label, titulo, sub, contenido) {
 // ═══════════════════════════════════════════════════════════════════
 //  VACACIONES (datos dinámicos via Apps Script)
 // ═══════════════════════════════════════════════════════════════════
+
+function switchMiInfo(panel) {
+  document.querySelectorAll(".miinfo-panel").forEach(function(p) { p.classList.remove("active"); });
+  document.querySelectorAll(".miinfo-tab").forEach(function(t) { t.classList.remove("active"); });
+  var el = document.getElementById("panel-" + panel);
+  if (el) el.classList.add("active");
+  var tabs = document.querySelectorAll(".miinfo-tab");
+  if (panel === "vacaciones" && tabs[0]) tabs[0].classList.add("active");
+  if (panel === "nomina"     && tabs[1]) tabs[1].classList.add("active");
+}
 
 function cargarVacaciones() {
   jsonp(APPS_SCRIPT_URL + "?accion=vacaciones&doc=" + encodeURIComponent(sesion.doc), "onVacResult");
