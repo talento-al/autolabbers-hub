@@ -300,7 +300,7 @@
   .fecha-mes      { font-size: 11px; color: var(--hint); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
   .fecha-item     { display: flex; align-items: baseline; gap: 10px; padding: 5px 0; border-bottom: 0.5px solid var(--border); }
   .fecha-item:last-child { border-bottom: none; }
-  .fecha-dia      { font-size: 18px; font-weight: 500; color: var(--green); min-width: 28px; }
+  .fecha-dia      { font-size: 14px; font-weight: 500; color: var(--green); min-width: 110px; white-space: nowrap; }
   .fecha-nombre   { font-size: 13px; color: var(--text); line-height: 1.4; }
 
   /* ── MI INFORMACIÓN ── */
@@ -495,7 +495,7 @@ var HUB_CONFIG = {
 
     // Accesos rápidos en el hero (máx 4, en orden).
     accesosRapidos: [
-      { label: "Personal",   titulo: "Mi información",           seccion: "mi-info",   icono: "persona"    },
+      { label: "Personal",   titulo: "Mi información",           seccion: "miInfo",    icono: "persona"    },
       { label: "Documentos", titulo: "Reglamento y políticas",   seccion: "biblioteca", icono: "documento"  },
       { label: "Fechas",     titulo: "Festivos y nómina",        seccion: "fechas",     icono: "reloj"      },
       { label: "Equipo",     titulo: "Directorio",               seccion: "contactos",  icono: "persona"    }
@@ -779,9 +779,10 @@ function switchHub() {
 function renderizarHero(cfg) {
   var accesosHTML = "";
   cfg.accesosRapidos.forEach(function(ac) {
+    var seccionId = ac.seccion === "miInfo" ? "mi-info" : ac.seccion;
     var activo = cfg.secciones[ac.seccion];
     var cls    = activo ? "qcard" : "qcard disabled";
-    var onclick = activo ? "onclick=\"scrollToId('" + ac.seccion + "')\"" : "";
+    var onclick = activo ? "onclick=\"scrollToId('" + seccionId + "')\"" : "";
     accesosHTML +=
       '<div class="' + cls + '" ' + onclick + '>' +
         '<div class="qcard-icon">' + iconoSVG(ac.icono) + '</div>' +
@@ -895,7 +896,7 @@ function renderizarSecciones(cfg) {
       var grupo = porMes[k];
       fechasHTML += '<div class="fecha-card"><div class="fecha-mes">' + grupo.label + '</div>';
       grupo.dias.forEach(function(f) {
-        fechasHTML += '<div class="fecha-item"><span class="fecha-dia">' + f.dia + '</span><span class="fecha-nombre">' + f.nombre + '</span></div>';
+        fechasHTML += '<div class="fecha-item"><span class="fecha-dia">' + f.diaSemana + ' ' + f.dia + '</span><span class="fecha-nombre">' + f.nombre + '</span></div>';
       });
       fechasHTML += '</div>';
     });
@@ -1084,7 +1085,9 @@ function calcularFestivosMX() {
     var mesLabel = meses[d.getMonth()] + " " + anio;
     var dia      = d.getDate();
 
-    resultado.push({ dia: String(dia), nombre: c.nombre, mesKey: mesKey, mesLabel: mesLabel, fecha: d });
+    var diasSemana = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+    var diaSemana  = diasSemana[dow];
+    resultado.push({ dia: String(dia), diaSemana: diaSemana, nombre: c.nombre, mesKey: mesKey, mesLabel: mesLabel, fecha: d });
   });
 
   // Ordenar por fecha
@@ -1115,7 +1118,8 @@ function calcularFechasNomina() {
   }
 
   function formatearPago(fecha) {
-    return fecha.getDate() + " de " + meses[fecha.getMonth()];
+    var diasSem = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+    return diasSem[fecha.getDay()] + " " + fecha.getDate() + " de " + meses[fecha.getMonth()];
   }
 
   // Generar próximas 6 fechas de pago desde hoy
