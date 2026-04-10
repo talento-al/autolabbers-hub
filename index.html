@@ -502,59 +502,49 @@ var HUB_CONFIG = {
     ],
 
     // Biblioteca documental por categoría.
-    // Para agregar un doc: copia un objeto { titulo, desc, url } y pégalo en la categoría correcta.
-    // Para agregar una categoría: copia { nombre, docs: [...] } y agrégala al array.
+    // Para agregar un doc: copia { titulo, desc, url, disponible: true } en la categoría correcta.
+    // disponible: false = aparece como "Próximamente", sin link.
     biblioteca: [
       {
         nombre: "Reglamentos",
         docs: [
-          { titulo: "Reglamento Interno de Trabajo",  desc: "Normas generales de convivencia y operación en Autolab México.", url: "TU_LINK_DRIVE_MX_REGLAMENTO" }
+          { titulo: "Reglamento Interno de Trabajo",
+            desc: "Normas generales de convivencia y operación en Autolab México.",
+            url: "PENDIENTE_LINK_RIT",
+            disponible: false }
         ]
       },
       {
         nombre: "Políticas",
         docs: [
-          { titulo: "Política de Vacaciones",         desc: "Cómo se calculan, solicitan y aprueban tus días de descanso.",   url: "TU_LINK_DRIVE_MX_VACACIONES" },
-          { titulo: "Política de Home Office",        desc: "Lineamientos para trabajo remoto y días en casa.",               url: "TU_LINK_DRIVE_MX_HOMEOFFICE" }
+          { titulo: "Política de Vacaciones",
+            desc: "Cómo se calculan, solicitan y aprueban tus días de descanso.",
+            url: "PENDIENTE_LINK_VACACIONES",
+            disponible: true },
+          { titulo: "Política de Home Office",
+            desc: "Lineamientos para trabajo remoto y días en casa.",
+            url: "PENDIENTE_LINK_HOMEOFFICE",
+            disponible: true },
+          { titulo: "Política de trabajo en talleres e instalaciones de clientes",
+            desc: "Lineamientos de seguridad y conducta para operaciones en sitio.",
+            url: "PENDIENTE_LINK_TALLERES",
+            disponible: false }
         ]
       },
       {
         nombre: "Procedimientos",
         docs: [
-          { titulo: "Cómo solicitar vacaciones",      desc: "Paso a paso para enviar tu solicitud y obtener aprobación.",     url: "TU_LINK_DRIVE_MX_PROC_VAC"  }
+          { titulo: "Proceso de solicitud de vacaciones",
+            desc: "Paso a paso para enviar tu solicitud y obtener aprobación.",
+            url: "PENDIENTE_LINK_PROC_VAC",
+            disponible: true }
         ]
       }
     ],
 
-    // Fechas clave agrupadas por mes.
-    fechas: [
-      {
-        mes: "Mayo 2025",
-        dias: [
-          { dia: "1",  nombre: "Día del Trabajo" },
-          { dia: "5",  nombre: "Batalla de Puebla" }
-        ]
-      },
-      {
-        mes: "Septiembre 2025",
-        dias: [
-          { dia: "16", nombre: "Independencia de México" }
-        ]
-      },
-      {
-        mes: "Noviembre 2025",
-        dias: [
-          { dia: "17", nombre: "Revolución Mexicana" }
-        ]
-      },
-      {
-        mes: "Diciembre 2025",
-        dias: [
-          { dia: "25", nombre: "Navidad" },
-          { dia: "31", nombre: "Cierre de año" }
-        ]
-      }
-    ],
+    // Festivos MX: generados automáticamente por calcularFestivosMX().
+    // No edites este array — el código lo calcula solo cada año.
+    fechas: [],
 
     // Contactos clave.
     // Para agregar: copia un objeto { nombre, rol, email, slack } y agrégalo.
@@ -862,12 +852,21 @@ function renderizarSecciones(cfg) {
       cfg.biblioteca.forEach(function(cat) {
         bibHTML += '<div class="bib-category"><div class="bib-category-title">' + cat.nombre + '</div>';
         cat.docs.forEach(function(doc) {
-          bibHTML +=
-            '<a class="bib-item" href="' + doc.url + '" target="_blank">' +
-              '<div class="bib-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#2DBD6E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
-              '<div class="bib-info"><div class="bib-title">' + doc.titulo + '</div><div class="bib-desc">' + doc.desc + '</div></div>' +
-              '<div class="bib-arrow">Abrir →</div>' +
-            '</a>';
+          if (doc.disponible) {
+            bibHTML +=
+              '<a class="bib-item" href="' + doc.url + '" target="_blank">' +
+                '<div class="bib-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#2DBD6E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
+                '<div class="bib-info"><div class="bib-title">' + doc.titulo + '</div><div class="bib-desc">' + doc.desc + '</div></div>' +
+                '<div class="bib-arrow">Abrir →</div>' +
+              '</a>';
+          } else {
+            bibHTML +=
+              '<div class="bib-item" style="opacity:0.45;cursor:default;">' +
+                '<div class="bib-icon" style="background:var(--bg-card);"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
+                '<div class="bib-info"><div class="bib-title" style="color:var(--muted);">' + doc.titulo + '</div><div class="bib-desc">' + doc.desc + '</div></div>' +
+                '<div style="font-size:11px;color:var(--hint);flex-shrink:0;align-self:center;white-space:nowrap;">Próximamente</div>' +
+              '</div>';
+          }
         });
         bibHTML += '</div>';
       });
@@ -880,22 +879,41 @@ function renderizarSecciones(cfg) {
 
   // FECHAS CLAVE
   if (cfg.secciones.fechas) {
+    var festivos   = calcularFestivosMX();
+    var nominaDias = calcularFechasNomina();
     var fechasHTML = "";
-    if (cfg.fechas && cfg.fechas.length) {
-      fechasHTML += '<div class="fechas-grid">';
-      cfg.fechas.forEach(function(grupo) {
-        fechasHTML += '<div class="fecha-card"><div class="fecha-mes">' + grupo.mes + '</div>';
-        grupo.dias.forEach(function(f) {
-          fechasHTML += '<div class="fecha-item"><span class="fecha-dia">' + f.dia + '</span><span class="fecha-nombre">' + f.nombre + '</span></div>';
-        });
-        fechasHTML += '</div>';
+
+    // Festivos agrupados por mes
+    var porMes = {};
+    festivos.forEach(function(f) {
+      if (!porMes[f.mesKey]) porMes[f.mesKey] = { label: f.mesLabel, dias: [] };
+      porMes[f.mesKey].dias.push(f);
+    });
+
+    fechasHTML += '<div class="fechas-grid">';
+    Object.keys(porMes).forEach(function(k) {
+      var grupo = porMes[k];
+      fechasHTML += '<div class="fecha-card"><div class="fecha-mes">' + grupo.label + '</div>';
+      grupo.dias.forEach(function(f) {
+        fechasHTML += '<div class="fecha-item"><span class="fecha-dia">' + f.dia + '</span><span class="fecha-nombre">' + f.nombre + '</span></div>';
       });
       fechasHTML += '</div>';
-    } else {
-      fechasHTML = '<div class="coming-soon">Las fechas clave para este país estarán disponibles pronto.</div>';
-    }
+    });
+    fechasHTML += '</div>';
+
+    // Nómina
+    fechasHTML += '<div style="margin-top:1.75rem;">';
+    fechasHTML += '<div class="bib-category-title" style="margin-bottom:0.875rem;">Fechas de nómina</div>';
+    fechasHTML += '<div class="nomina-card">';
+    fechasHTML += '<div style="font-size:14px;color:var(--text);line-height:1.7;">' + nominaDias.regla + '</div>';
+    fechasHTML += '<div style="margin-top:0.875rem;display:flex;flex-wrap:wrap;gap:8px;">';
+    nominaDias.proximas.forEach(function(p) {
+      fechasHTML += '<div style="background:var(--green-light);border:0.5px solid var(--green-border);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--green);font-weight:500;">' + p + '</div>';
+    });
+    fechasHTML += '</div></div></div>';
+
     html += seccionWrapper("fechas", "Calendario", "Fechas clave",
-      "Días festivos y fechas importantes para este año.", fechasHTML);
+      "Festivos oficiales y fechas de pago de " + new Date().getFullYear() + ".", fechasHTML);
   }
 
   // CONTACTOS — cargados dinámicamente desde el Sheet
@@ -1018,6 +1036,109 @@ function onContactosResult(data) {
   });
 
   el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FESTIVOS OFICIALES MÉXICO — auto-calculados por año
+//  Fuente: Ley Federal del Trabajo (Art. 74) + decreto 2006 (lunes)
+//  Filtro: se excluyen los que caen en domingo
+// ═══════════════════════════════════════════════════════════════════
+
+function calcularFestivosMX() {
+  var hoy  = new Date();
+  var anio = hoy.getFullYear();
+  var meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+               "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+  // Regla del lunes: primer lunes del mes en o después del día base
+  function primerLunes(anio, mes, diaBase) {
+    var d = new Date(anio, mes, diaBase);
+    var dow = d.getDay(); // 0=dom,1=lun...
+    if (dow === 1) return d;
+    var diff = dow === 0 ? 1 : (8 - dow);
+    return new Date(anio, mes, diaBase + diff);
+  }
+
+  // Festivos fijos y con regla de lunes (mes base 0)
+  var candidatos = [
+    { fecha: new Date(anio, 0, 1),  nombre: "Año Nuevo" },
+    { fecha: primerLunes(anio, 1, 1), nombre: "Constitución Mexicana" },
+    { fecha: primerLunes(anio, 2, 21), nombre: "Natalicio de Benito Juárez" },
+    { fecha: new Date(anio, 4, 1),  nombre: "Día del Trabajo" },
+    { fecha: new Date(anio, 8, 16), nombre: "Independencia de México" },
+    { fecha: primerLunes(anio, 10, 20), nombre: "Revolución Mexicana" },
+    { fecha: new Date(anio, 11, 25), nombre: "Navidad" }
+  ];
+
+  // Elecciones federales cada 6 años (2024, 2030...) y cada 3 (2027...)
+  // Se omiten por ser variables — se pueden añadir manualmente si aplica
+
+  var resultado = [];
+  candidatos.forEach(function(c) {
+    var d   = c.fecha;
+    var dow = d.getDay();
+    if (dow === 0) return; // excluir domingos
+    if (d < hoy) return;   // excluir fechas ya pasadas
+
+    var mesKey   = anio + "-" + String(d.getMonth()).padStart(2,"0");
+    var mesLabel = meses[d.getMonth()] + " " + anio;
+    var dia      = d.getDate();
+
+    resultado.push({ dia: String(dia), nombre: c.nombre, mesKey: mesKey, mesLabel: mesLabel, fecha: d });
+  });
+
+  // Ordenar por fecha
+  resultado.sort(function(a,b){ return a.fecha - b.fecha; });
+  return resultado;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FECHAS DE NÓMINA — días 15 y 30/31, viernes si cae fin de semana
+// ═══════════════════════════════════════════════════════════════════
+
+function calcularFechasNomina() {
+  var hoy    = new Date();
+  var anio   = hoy.getFullYear();
+  var mes    = hoy.getMonth();
+  var meses  = ["enero","febrero","marzo","abril","mayo","junio",
+                "julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  var mesesC = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+                "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+  function diasEnMes(a, m) { return new Date(a, m + 1, 0).getDate(); }
+
+  function ajustarHabil(fecha) {
+    var dow = fecha.getDay();
+    if (dow === 0) { fecha.setDate(fecha.getDate() - 2); } // dom → viernes
+    if (dow === 6) { fecha.setDate(fecha.getDate() - 1); } // sáb → viernes
+    return fecha;
+  }
+
+  function formatearPago(fecha) {
+    return fecha.getDate() + " de " + meses[fecha.getMonth()];
+  }
+
+  // Generar próximas 6 fechas de pago desde hoy
+  var proximas = [];
+  var m = mes;
+  var a = anio;
+  while (proximas.length < 6) {
+    var ultimo = diasEnMes(a, m);
+    var dias   = [15, ultimo === 28 ? 28 : (ultimo >= 30 ? 30 : ultimo)];
+    dias.forEach(function(d) {
+      var fecha = ajustarHabil(new Date(a, m, d));
+      if (fecha >= hoy && proximas.length < 6) {
+        proximas.push(formatearPago(fecha));
+      }
+    });
+    m++;
+    if (m > 11) { m = 0; a++; }
+  }
+
+  var regla = "La nómina se paga los días <strong>15</strong> y <strong>último día hábil del mes</strong>. " +
+              "Si alguna de estas fechas cae en sábado o domingo, el pago se adelanta al <strong>viernes anterior</strong>.";
+
+  return { regla: regla, proximas: proximas };
 }
 
 // ═══════════════════════════════════════════════════════════════════
