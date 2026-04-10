@@ -1126,12 +1126,12 @@ function calcularFechasNomina() {
   var proximas = [];
   var m = mes;
   var a = anio;
-  while (proximas.length < 6) {
+  while (proximas.length < 4) {
     var ultimo = diasEnMes(a, m);
     var dias   = [15, ultimo === 28 ? 28 : (ultimo >= 30 ? 30 : ultimo)];
     dias.forEach(function(d) {
       var fecha = ajustarHabil(new Date(a, m, d));
-      if (fecha >= hoy && proximas.length < 6) {
+      if (fecha >= hoy && proximas.length < 4) {
         proximas.push(formatearPago(fecha));
       }
     });
