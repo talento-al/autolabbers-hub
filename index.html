@@ -327,7 +327,7 @@
   .nomina-cta:hover { opacity: 0.88; }
 
   /* ── CONTACTOS ── */
-  .contactos-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+  .contactos-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
   .contacto-card  {
     background: var(--bg-card); border: 0.5px solid var(--border);
     border-radius: 12px; padding: 1.25rem;
@@ -511,7 +511,8 @@ var HUB_CONFIG = {
           { titulo: "Reglamento Interno de Trabajo",
             desc: "Normas generales de convivencia y operación en Autolab México.",
             url: "PENDIENTE_LINK_RIT",
-            disponible: false }
+            disponible: false,
+            visible: false }
         ]
       },
       {
@@ -528,7 +529,8 @@ var HUB_CONFIG = {
           { titulo: "Política de trabajo en talleres e instalaciones de clientes",
             desc: "Lineamientos de seguridad y conducta para operaciones en sitio.",
             url: "",
-            disponible: false }
+            disponible: false,
+            visible: false }
         ]
       },
       {
@@ -861,6 +863,7 @@ function renderizarSecciones(cfg) {
       cfg.biblioteca.forEach(function(cat) {
         bibHTML += '<div class="bib-category"><div class="bib-category-title">' + cat.nombre + '</div>';
         cat.docs.forEach(function(doc) {
+          if (doc.visible === false) return;
           if (doc.disponible) {
             bibHTML +=
               '<a class="bib-item" href="' + doc.url + '" target="_blank">' +
@@ -1134,12 +1137,12 @@ function calcularFechasNomina() {
   var proximas = [];
   var m = mes;
   var a = anio;
-  while (proximas.length < 6) {
+  while (proximas.length < 4) {
     var ultimo = diasEnMes(a, m);
     var dias   = [15, ultimo === 28 ? 28 : (ultimo >= 30 ? 30 : ultimo)];
     dias.forEach(function(d) {
       var fecha = ajustarHabil(new Date(a, m, d));
-      if (fecha >= hoy && proximas.length < 6) {
+      if (fecha >= hoy && proximas.length < 4) {
         proximas.push(formatearPago(fecha));
       }
     });
