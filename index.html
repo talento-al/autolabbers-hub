@@ -345,6 +345,40 @@
   .contacto-link   { font-size: 12px; color: var(--green); text-decoration: none; }
   .contacto-link:hover { text-decoration: underline; }
 
+  /* ── ACORDEÓN DIRECTORIO ── */
+  .acord-area { margin-bottom: 8px; border-radius: 12px; overflow: hidden; border: 0.5px solid var(--border); }
+  .acord-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; cursor: pointer; transition: background 0.15s;
+    background: var(--bg-card);
+    user-select: none;
+  }
+  .acord-header:hover { background: var(--choice-hover); }
+  .acord-header.open {
+    background: var(--green-light);
+    border-bottom: 0.5px solid var(--green-border);
+  }
+  .acord-header-left { display: flex; align-items: center; gap: 10px; }
+  .acord-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border-md); flex-shrink: 0; transition: background 0.15s;
+  }
+  .acord-header.open .acord-dot { background: var(--green); }
+  .acord-area-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .acord-header.open .acord-area-name { color: var(--green); }
+  .acord-count { font-size: 12px; color: var(--muted); }
+  .acord-header.open .acord-count { color: var(--green); opacity: 0.75; }
+  .acord-chevron {
+    font-size: 12px; color: var(--muted); transition: transform 0.2s;
+    display: inline-block;
+  }
+  .acord-header.open .acord-chevron { transform: rotate(180deg); color: var(--green); }
+  .acord-body {
+    display: none; padding: 14px;
+    background: var(--bg-hero);
+  }
+  .acord-body.open { display: block; }
+
   /* ── FOOTER ── */
   .footer { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--hint); }
   .footer a { color: var(--muted); text-decoration: none; }
@@ -505,7 +539,7 @@ var HUB_CONFIG = {
     // Para agregar un doc: copia { titulo, desc, url, disponible: true } en la categoría correcta.
     // disponible: false = aparece como "Próximamente", sin link.
     biblioteca: [
-      { visible: false, nombre: "Reglamentos",
+      {
         nombre: "Reglamentos",
         docs: [
           { titulo: "Reglamento Interno de Trabajo",
@@ -861,7 +895,7 @@ function renderizarSecciones(cfg) {
     var bibHTML = "";
     if (cfg.biblioteca && cfg.biblioteca.length) {
       cfg.biblioteca.forEach(function(cat) {
-       if (cat.visible === false) return;
+        if (cat.visible === false) return;
         bibHTML += '<div class="bib-category"><div class="bib-category-title">' + cat.nombre + '</div>';
         cat.docs.forEach(function(doc) {
           if (doc.visible === false) return;
@@ -1018,19 +1052,36 @@ function onContactosResult(data) {
     return;
   }
 
-  // Agrupar por área
+  // Agrupar por área manteniendo orden de aparición
+  var areaKeys = [];
   var areas = {};
   data.contactos.forEach(function(c) {
     var area = c.area || "General";
-    if (!areas[area]) areas[area] = [];
+    if (!areas[area]) { areas[area] = []; areaKeys.push(area); }
     areas[area].push(c);
   });
 
+  areaKeys.sort();
   var html = "";
-  Object.keys(areas).sort().forEach(function(area) {
-    html += '<div style="margin-bottom:1.75rem;">';
-    html += '<div class="bib-category-title" style="margin-bottom:0.875rem;">' + area + '</div>';
-    html += '<div class="contactos-grid">';
+
+  areaKeys.forEach(function(area, idx) {
+    var isFirst  = idx === 0;
+    var count    = areas[area].length;
+    var headerCls = "acord-header" + (isFirst ? " open" : "");
+    var bodyCls   = "acord-body"   + (isFirst ? " open" : "");
+    var areaId    = "acord-" + area.replace(/\s+/g, "-").toLowerCase();
+
+    html += '<div class="acord-area">';
+    html += '<div class="' + headerCls + '" onclick="toggleAcordeon(this)" data-target="' + areaId + '">';
+    html +=   '<div class="acord-header-left">';
+    html +=     '<div class="acord-dot"></div>';
+    html +=     '<span class="acord-area-name">' + area + '</span>';
+    html +=     '<span class="acord-count">' + count + (count === 1 ? ' persona' : ' personas') + '</span>';
+    html +=   '</div>';
+    html +=   '<span class="acord-chevron">▾</span>';
+    html += '</div>';
+    html += '<div class="' + bodyCls + '" id="' + areaId + '">';
+    html +=   '<div class="contactos-grid">';
     areas[area].forEach(function(c) {
       var ini = c.nombre.split(" ").filter(Boolean).slice(0,2).map(function(p){ return p[0]; }).join("").toUpperCase();
       html +=
@@ -1045,10 +1096,32 @@ function onContactosResult(data) {
           '</div>' +
         '</div>';
     });
-    html += '</div></div>';
+    html +=   '</div>';
+    html += '</div>';
+    html += '</div>';
   });
 
   el.innerHTML = html;
+}
+
+function toggleAcordeon(header) {
+  var targetId = header.getAttribute("data-target");
+  var isOpen   = header.classList.contains("open");
+
+  // Cerrar todos
+  document.querySelectorAll(".acord-header.open").forEach(function(h) {
+    h.classList.remove("open");
+  });
+  document.querySelectorAll(".acord-body.open").forEach(function(b) {
+    b.classList.remove("open");
+  });
+
+  // Abrir el clickeado si estaba cerrado
+  if (!isOpen) {
+    header.classList.add("open");
+    var body = document.getElementById(targetId);
+    if (body) body.classList.add("open");
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
