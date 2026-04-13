@@ -505,7 +505,7 @@ var HUB_CONFIG = {
     // Para agregar un doc: copia { titulo, desc, url, disponible: true } en la categoría correcta.
     // disponible: false = aparece como "Próximamente", sin link.
     biblioteca: [
-      {
+      { visible: false, nombre: "Reglamentos",
         nombre: "Reglamentos",
         docs: [
           { titulo: "Reglamento Interno de Trabajo",
@@ -861,6 +861,7 @@ function renderizarSecciones(cfg) {
     var bibHTML = "";
     if (cfg.biblioteca && cfg.biblioteca.length) {
       cfg.biblioteca.forEach(function(cat) {
+       if (cat.visible === false) return;
         bibHTML += '<div class="bib-category"><div class="bib-category-title">' + cat.nombre + '</div>';
         cat.docs.forEach(function(doc) {
           if (doc.visible === false) return;
