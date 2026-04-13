@@ -608,13 +608,15 @@ var HUB_CONFIG = {
     secciones: {
       vacaciones: true,
       biblioteca: true,
-      fechas:     false,   // aún no disponible para CO
-      contactos:  true     // directorio dinámico desde Sheet
+      fechas:     true,
+      contactos:  true
     },
 
     accesosRapidos: [
       { label: "Consulta rápida", titulo: "Mis vacaciones",        seccion: "vacaciones", icono: "calendario" },
-      { label: "Documentos",      titulo: "Reglamento y políticas", seccion: "biblioteca", icono: "documento"  }
+      { label: "Documentos",      titulo: "Reglamento y políticas", seccion: "biblioteca", icono: "documento"  },
+      { label: "Fechas",          titulo: "Festivos y nómina",      seccion: "fechas",     icono: "reloj"      },
+      { label: "Equipo",          titulo: "Directorio",             seccion: "contactos",  icono: "persona"    }
     ],
 
     biblioteca: [
@@ -926,8 +928,8 @@ function renderizarSecciones(cfg) {
 
   // FECHAS CLAVE
   if (cfg.secciones.fechas) {
-    var festivos   = calcularFestivosMX();
-    var nominaDias = calcularFechasNomina();
+    var festivos   = sesion.hubActual === "CO" ? calcularFestivosCO() : calcularFestivosMX();
+    var nominaDias = sesion.hubActual === "CO" ? calcularFechasNominaCO() : calcularFechasNomina();
     var fechasHTML = "";
 
     // Festivos agrupados por mes
@@ -1226,6 +1228,138 @@ function calcularFechasNomina() {
 
   var regla = "La nómina se paga los días <strong>15</strong> y <strong>último día hábil del mes</strong>. " +
               "Si alguna de estas fechas cae en sábado o domingo, el pago se adelanta al <strong>viernes anterior</strong>.";
+
+  return { regla: regla, proximas: proximas };
+}
+
+
+// ═══════════════════════════════════════════════════════════════════
+//  FESTIVOS OFICIALES COLOMBIA — auto-calculados por año
+//  Fuente: Ley 51 de 1983 (Ley Emiliani)
+//  Fijos: 1 ene, 1 may, 20 jul, 7 ago, 8 dic, 25 dic
+//  Emiliani (→ lunes siguiente si no cae lunes): 6 ene, 19 mar,
+//    29 jun, 15 ago, 12 oct, 1 nov, 11 nov
+//  Móviles religiosos: Semana Santa (jue/vie), Ascensión,
+//    Corpus Christi, Sagrado Corazón
+//  Filtro: se excluyen domingos (Ley Emiliani los traslada al lunes)
+// ═══════════════════════════════════════════════════════════════════
+
+function calcularFestivosCO() {
+  var hoy  = new Date();
+  var anio = hoy.getFullYear();
+  var meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+               "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+  // Ley Emiliani: si no cae lunes, mover al lunes siguiente
+  function emiliani(fecha) {
+    var dow = fecha.getDay();
+    if (dow === 1) return fecha;
+    var diff = dow === 0 ? 1 : (8 - dow);
+    return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate() + diff);
+  }
+
+  // Domingo de Pascua (algoritmo de Butcher)
+  function pascua(anio) {
+    var a = anio % 19, b = Math.floor(anio/100), c = anio % 100;
+    var d = Math.floor(b/4), e = b % 4, f = Math.floor((b+8)/25);
+    var g = Math.floor((b-f+1)/3), h = (19*a+b-d-g+15) % 30;
+    var i = Math.floor(c/4), k = c % 4;
+    var l = (32+2*e+2*i-h-k) % 7;
+    var m = Math.floor((a+11*h+22*l)/451);
+    var mes = Math.floor((h+l-7*m+114)/31) - 1;
+    var dia = ((h+l-7*m+114) % 31) + 1;
+    return new Date(anio, mes, dia);
+  }
+
+  var p = pascua(anio);
+
+  function addDias(base, n) {
+    return new Date(base.getFullYear(), base.getMonth(), base.getDate() + n);
+  }
+
+  var candidatos = [
+    // Fijos (no aplica Ley Emiliani)
+    { fecha: new Date(anio, 0, 1),   nombre: "Año Nuevo",             emiliani: false },
+    { fecha: new Date(anio, 4, 1),   nombre: "Día del Trabajo",       emiliani: false },
+    { fecha: new Date(anio, 6, 20),  nombre: "Independencia de Colombia", emiliani: false },
+    { fecha: new Date(anio, 7, 7),   nombre: "Batalla de Boyacá",     emiliani: false },
+    { fecha: new Date(anio, 11, 8),  nombre: "Inmaculada Concepción", emiliani: false },
+    { fecha: new Date(anio, 11, 25), nombre: "Navidad",               emiliani: false },
+    // Emiliani
+    { fecha: new Date(anio, 0, 6),   nombre: "Reyes Magos",           emiliani: true  },
+    { fecha: new Date(anio, 2, 19),  nombre: "San José",              emiliani: true  },
+    { fecha: new Date(anio, 5, 29),  nombre: "San Pedro y San Pablo", emiliani: true  },
+    { fecha: new Date(anio, 7, 15),  nombre: "Asunción de la Virgen", emiliani: true  },
+    { fecha: new Date(anio, 9, 12),  nombre: "Día de la Raza",        emiliani: true  },
+    { fecha: new Date(anio, 10, 1),  nombre: "Todos los Santos",      emiliani: true  },
+    { fecha: new Date(anio, 10, 11), nombre: "Independencia de Cartagena", emiliani: true },
+    // Semana Santa (fijos respecto a Pascua)
+    { fecha: addDias(p, -3), nombre: "Jueves Santo",   emiliani: false },
+    { fecha: addDias(p, -2), nombre: "Viernes Santo",  emiliani: false },
+    // Móviles Emiliani respecto a Pascua
+    { fecha: addDias(p, 39), nombre: "Ascensión",      emiliani: true  },
+    { fecha: addDias(p, 60), nombre: "Corpus Christi", emiliani: true  },
+    { fecha: addDias(p, 68), nombre: "Sagrado Corazón",emiliani: true  }
+  ];
+
+  var diasSemana = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+  var resultado  = [];
+
+  candidatos.forEach(function(c) {
+    var d = c.emiliani ? emiliani(c.fecha) : c.fecha;
+    if (d.getDay() === 0) return;  // excluir domingos
+    if (d < hoy) return;           // solo próximos
+
+    var mesKey   = anio + "-" + String(d.getMonth()).padStart(2,"0");
+    var mesLabel = meses[d.getMonth()] + " " + anio;
+    resultado.push({
+      dia:      String(d.getDate()),
+      diaSemana: diasSemana[d.getDay()],
+      nombre:   c.nombre,
+      mesKey:   mesKey,
+      mesLabel: mesLabel,
+      fecha:    d
+    });
+  });
+
+  resultado.sort(function(a,b){ return a.fecha - b.fecha; });
+  return resultado;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FECHAS DE NÓMINA COLOMBIA — día 25, viernes si cae fin de semana
+// ═══════════════════════════════════════════════════════════════════
+
+function calcularFechasNominaCO() {
+  var hoy   = new Date();
+  var anio  = hoy.getFullYear();
+  var mes   = hoy.getMonth();
+  var meses = ["enero","febrero","marzo","abril","mayo","junio",
+               "julio","agosto","septiembre","octubre","noviembre","diciembre"];
+
+  function ajustarHabil(fecha) {
+    var dow = fecha.getDay();
+    if (dow === 0) fecha.setDate(fecha.getDate() - 2); // dom → viernes
+    if (dow === 6) fecha.setDate(fecha.getDate() - 1); // sáb → viernes
+    return fecha;
+  }
+
+  function formatearPago(fecha) {
+    var diasSem = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+    return diasSem[fecha.getDay()] + " " + fecha.getDate() + " de " + meses[fecha.getMonth()];
+  }
+
+  var proximas = [];
+  var m = mes, a = anio;
+  while (proximas.length < 4) {
+    var fecha = ajustarHabil(new Date(a, m, 25));
+    if (fecha >= hoy && proximas.length < 4) proximas.push(formatearPago(fecha));
+    m++;
+    if (m > 11) { m = 0; a++; }
+  }
+
+  var regla = "La nómina se paga el día <strong>25 de cada mes</strong>. " +
+              "Si cae en sábado o domingo, el pago se adelanta al <strong>viernes anterior</strong>.";
 
   return { regla: regla, proximas: proximas };
 }
