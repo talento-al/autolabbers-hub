@@ -483,6 +483,20 @@
     <!-- SECCIONES (renderizadas dinámicamente según HUB_CONFIG) -->
     <div id="hub-sections"></div>
 
+    <!-- TARJETA DE SUGERENCIAS -->
+    <div style="margin-top:1.5rem;background:var(--bg-hero);border:0.5px solid var(--border);border-radius:20px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--green);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.4rem;">Tu opinión importa</div>
+        <div style="font-size:18px;font-weight:500;color:var(--text);margin-bottom:0.35rem;">¿Tienes una sugerencia para el hub?</div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.6;">Cuéntanos qué mejorarías, qué te falta o qué te gustaría ver aquí.</div>
+      </div>
+      <a href="mailto:talento@autolab.mx?subject=Sugerencia%20para%20el%20Autolabbers%20Hub"
+         style="display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:500;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:opacity 0.15s;"
+         onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+        Enviar sugerencia →
+      </a>
+    </div>
+
     <footer class="footer">
       ¿Dudas? Escribe a <a href="mailto:talento@autolab.mx">talento@autolab.mx</a>
       &nbsp;·&nbsp;
@@ -1141,10 +1155,18 @@ function calcularFestivosMX() {
   // Regla del lunes: primer lunes del mes en o después del día base
   function primerLunes(anio, mes, diaBase) {
     var d = new Date(anio, mes, diaBase);
-    var dow = d.getDay(); // 0=dom,1=lun...
+    var dow = d.getDay();
     if (dow === 1) return d;
     var diff = dow === 0 ? 1 : (8 - dow);
     return new Date(anio, mes, diaBase + diff);
+  }
+
+  // Tercer lunes del mes (LFT: Revolución Mexicana)
+  function tercerLunes(anio, mes) {
+    var d   = new Date(anio, mes, 1);
+    var dow = d.getDay();
+    var primerL = dow <= 1 ? 1 + (1 - dow) : 1 + (8 - dow);
+    return new Date(anio, mes, primerL + 14);
   }
 
   // Festivos fijos y con regla de lunes (mes base 0)
@@ -1154,7 +1176,7 @@ function calcularFestivosMX() {
     { fecha: primerLunes(anio, 2, 21), nombre: "Natalicio de Benito Juárez" },
     { fecha: new Date(anio, 4, 1),  nombre: "Día del Trabajo" },
     { fecha: new Date(anio, 8, 16), nombre: "Independencia de México" },
-    { fecha: primerLunes(anio, 10, 20), nombre: "Revolución Mexicana" },
+    { fecha: tercerLunes(anio, 10),     nombre: "Revolución Mexicana" },  // tercer lunes de noviembre (LFT)
     { fecha: new Date(anio, 11, 25), nombre: "Navidad" }
   ];
 
