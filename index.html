@@ -345,6 +345,20 @@
   .contacto-link   { font-size: 12px; color: var(--green); text-decoration: none; }
   .contacto-link:hover { text-decoration: underline; }
 
+  /* ── CUMPLEAÑOS ── */
+  .cumple-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 0.5rem; }
+  .cumple-card {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg-card); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; min-width: 200px; flex: 1;
+  }
+  .cumple-dia {
+    font-size: 22px; font-weight: 500; color: var(--green);
+    min-width: 32px; text-align: center; flex-shrink: 0;
+  }
+  .cumple-nombre { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .cumple-empty  { font-size: 14px; color: var(--muted); padding: 0.5rem 0; }
+
   /* ── ACORDEÓN DIRECTORIO ── */
   .acord-area { margin-bottom: 8px; border-radius: 12px; overflow: hidden; border: 0.5px solid var(--border); }
   .acord-header {
@@ -490,11 +504,11 @@
         <div style="font-size:18px;font-weight:500;color:var(--text);margin-bottom:0.35rem;">¿Tienes una sugerencia para el hub?</div>
         <div style="font-size:14px;color:var(--muted);line-height:1.6;">Cuéntanos qué mejorarías, qué te falta o qué te gustaría ver aquí.</div>
       </div>
-      <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx&su=Sugerencia%20para%20el%20Autolabbers%20Hub"
+      <a href="mailto:talento@autolab.mx?subject=Sugerencia%20para%20el%20Autolabbers%20Hub"
          style="display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:500;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:opacity 0.15s;"
          onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'" target="_blank">
         Enviar sugerencia →
-      </a> 
+      </a>
     </div>
 
     <footer class="footer">
@@ -818,6 +832,7 @@ function entrarHub(hub) {
   var esServices = (sesion.tipoContrato || "").toLowerCase().indexOf("services") !== -1;
   if ((cfg.secciones.miInfo || cfg.secciones.vacaciones) && !esServices) cargarVacaciones();
   if (cfg.secciones.contactos) cargarContactos(hub);
+  if (cfg.secciones.fechas) cargarCumpleanos(hub);
 }
 
 function switchHub() {
@@ -974,6 +989,9 @@ function renderizarSecciones(cfg) {
       fechasHTML += '<div style="background:var(--green-light);border:0.5px solid var(--green-border);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--green);font-weight:500;">' + p + '</div>';
     });
     fechasHTML += '</div></div></div>';
+
+    // Cumpleaños — placeholder, se llena con cargarCumpleanos()
+    fechasHTML += '<div style="margin-top:1.75rem;" id="cumple-wrap" style="display:none"></div>';
 
     html += seccionWrapper("fechas", "Calendario", "Fechas clave",
       "Festivos oficiales y fechas de pago de " + new Date().getFullYear() + ".", fechasHTML);
@@ -1384,6 +1402,42 @@ function calcularFechasNominaCO() {
               "Si cae en sábado o domingo, el pago se adelanta al <strong>viernes anterior</strong>.";
 
   return { regla: regla, proximas: proximas };
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CUMPLEAÑOS
+// ═══════════════════════════════════════════════════════════════════
+
+function cargarCumpleanos(hub) {
+  jsonp(APPS_SCRIPT_URL + "?accion=cumpleanos&pais=" + hub, "onCumpleanosResult");
+}
+
+function onCumpleanosResult(data) {
+  var wrap = document.getElementById("cumple-wrap");
+  if (!wrap) return;
+
+  var meses = ["enero","febrero","marzo","abril","mayo","junio",
+               "julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  var mes   = data.mes !== undefined ? meses[data.mes] : "";
+
+  if (!data.ok || !data.cumpleanos || !data.cumpleanos.length) {
+    wrap.style.display = "none";
+    return;
+  }
+
+  var html = '<div class="bib-category-title" style="margin-bottom:0.875rem;">🎂 Cumpleaños de ' + mes + '</div>';
+  html += '<div class="cumple-grid">';
+  data.cumpleanos.forEach(function(c) {
+    html +=
+      '<div class="cumple-card">' +
+        '<div class="cumple-dia">' + c.dia + '</div>' +
+        '<div class="cumple-nombre">' + c.nombre + '</div>' +
+      '</div>';
+  });
+  html += '</div>';
+
+  wrap.innerHTML = html;
+  wrap.style.display = "block";
 }
 
 // ═══════════════════════════════════════════════════════════════════
