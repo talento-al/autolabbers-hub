@@ -346,18 +346,32 @@
   .contacto-link:hover { text-decoration: underline; }
 
   /* ── CUMPLEAÑOS ── */
-  .cumple-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 0.5rem; }
+  .cumple-header {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; padding: 14px 16px; border-radius: 12px;
+    background: var(--green-light); border: 0.5px solid var(--green-border);
+    transition: opacity 0.15s; user-select: none;
+  }
+  .cumple-header:hover { opacity: 0.85; }
+  .cumple-header-left { display: flex; align-items: center; gap: 10px; }
+  .cumple-header-title { font-size: 14px; font-weight: 500; color: var(--green); }
+  .cumple-header-count { font-size: 12px; color: var(--green); opacity: 0.75; }
+  .cumple-chevron { font-size: 12px; color: var(--green); transition: transform 0.2s; display: inline-block; }
+  .cumple-chevron.open { transform: rotate(180deg); }
+  .cumple-body { display: none; margin-top: 12px; }
+  .cumple-body.open { display: block; }
+  .cumple-gif { width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; }
+  .cumple-grid { display: flex; flex-wrap: wrap; gap: 10px; }
   .cumple-card {
     display: flex; align-items: center; gap: 12px;
     background: var(--bg-card); border: 0.5px solid var(--border);
     border-radius: 12px; padding: 12px 14px; min-width: 200px; flex: 1;
   }
-  .cumple-dia {
-    font-size: 22px; font-weight: 500; color: var(--green);
-    min-width: 32px; text-align: center; flex-shrink: 0;
-  }
-  .cumple-nombre { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.3; }
-  .cumple-empty  { font-size: 14px; color: var(--muted); padding: 0.5rem 0; }
+  .cumple-dia-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; min-width: 52px; }
+  .cumple-dia      { font-size: 22px; font-weight: 500; color: var(--green); line-height: 1; }
+  .cumple-diasem   { font-size: 10px; color: var(--green); opacity: 0.8; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+  .cumple-nombre   { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .cumple-empty    { font-size: 14px; color: var(--muted); padding: 0.5rem 0; }
 
   /* ── ACORDEÓN DIRECTORIO ── */
   .acord-area { margin-bottom: 8px; border-radius: 12px; overflow: hidden; border: 0.5px solid var(--border); }
@@ -1425,19 +1439,50 @@ function onCumpleanosResult(data) {
     return;
   }
 
-  var html = '<div class="bib-category-title" style="margin-bottom:0.875rem;">🎂 Cumpleaños de ' + mes + '</div>';
-  html += '<div class="cumple-grid">';
+  var count = data.cumpleanos.length;
+  var label = count === 1 ? "1 cumpleaños este mes" : count + " cumpleaños este mes";
+
+  var html =
+    '<div class="cumple-header" onclick="toggleCumpleanos(this)">' +
+      '<div class="cumple-header-left">' +
+        '<span style="font-size:18px;line-height:1;">🎂</span>' +
+        '<span class="cumple-header-title">Cumpleaños de ' + mes + '</span>' +
+        '<span class="cumple-header-count">' + label + '</span>' +
+      '</div>' +
+      '<span class="cumple-chevron">▾</span>' +
+    '</div>' +
+    '<div class="cumple-body" id="cumple-body">' +
+      '<img src="cumpleanos.gif" alt="Feliz cumpleaños" class="cumple-gif" />' +
+      '<div class="cumple-grid">';
+
   data.cumpleanos.forEach(function(c) {
     html +=
       '<div class="cumple-card">' +
-        '<div class="cumple-dia">' + c.dia + '</div>' +
+        '<div class="cumple-dia-wrap">' +
+          '<div class="cumple-dia">' + c.dia + '</div>' +
+          '<div class="cumple-diasem">' + (c.diaSemana || "") + '</div>' +
+        '</div>' +
         '<div class="cumple-nombre">' + c.nombre + '</div>' +
       '</div>';
   });
-  html += '</div>';
+
+  html += '</div></div>';
 
   wrap.innerHTML = html;
   wrap.style.display = "block";
+}
+
+function toggleCumpleanos(header) {
+  var body    = document.getElementById("cumple-body");
+  var chevron = header.querySelector(".cumple-chevron");
+  var isOpen  = body.classList.contains("open");
+  if (isOpen) {
+    body.classList.remove("open");
+    chevron.classList.remove("open");
+  } else {
+    body.classList.add("open");
+    chevron.classList.add("open");
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
