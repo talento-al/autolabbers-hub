@@ -360,7 +360,7 @@
   .cumple-chevron.open { transform: rotate(180deg); }
   .cumple-body { display: none; margin-top: 12px; }
   .cumple-body.open { display: block; }
-  .cumple-gif { width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; }
+  .cumple-gif { width: 100%; max-height: 320px; object-fit: contain; border-radius: 12px; margin-bottom: 12px; background: var(--bg-card); }
   .cumple-grid { display: flex; flex-wrap: wrap; gap: 10px; }
   .cumple-card {
     display: flex; align-items: center; gap: 12px;
@@ -518,7 +518,7 @@
         <div style="font-size:18px;font-weight:500;color:var(--text);margin-bottom:0.35rem;">¿Qué mejorarías?</div>
         <div style="font-size:14px;color:var(--muted);line-height:1.6;">Cuéntanos qué mejorarías, qué te falta o qué te gustaría ver aquí.</div>
       </div>
-      <a href="mailto:talento@autolab.mx?subject=Sugerencia%20para%20el%20Autolabbers%20Hub"
+      <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx&su=Sugerencia%20para%20el%20Autolabbers%20Hub"
          style="display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:500;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:opacity 0.15s;"
          onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'" target="_blank">
         Enviar sugerencia →
@@ -526,7 +526,7 @@
     </div>
 
     <footer class="footer">
-      ¿Dudas? Escribe a <a href="mailto:talento@autolab.mx">talento@autolab.mx</a>
+      ¿Dudas? Escribe a <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx" target="_blank">talento@autolab.mx</a>
       &nbsp;·&nbsp;
       <a href="#" onclick="cerrarSesion();return false;">Cerrar sesión</a>
       <span id="footer-switch-wrap" style="display:none">
@@ -920,7 +920,7 @@ function renderizarSecciones(cfg) {
             '<div class="nomina-step"><div class="nomina-num">3</div><div class="nomina-text">Ingresa la contraseña que creaste al activar tu cuenta.</div></div>' +
           '</div>' +
           '<a class="nomina-cta" href="https://app.runahr.com/login" target="_blank">Ir a Runa →</a>' +
-          '<div class="nomina-hint">¿Olvidaste tu contraseña? Puedes restablecerla desde la misma plataforma usando tu correo personal. Si tienes problemas para acceder, escríbenos a <a href="mailto:talento@autolab.mx">talento@autolab.mx</a></div>' +
+          '<div class="nomina-hint">¿Olvidaste tu contraseña? Puedes restablecerla desde la misma plataforma usando tu correo personal. Si tienes problemas para acceder, escríbenos a <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx" target="_blank">talento@autolab.mx</a></div>' +
         '</div>' +
       '</div>';
 
@@ -995,7 +995,8 @@ function renderizarSecciones(cfg) {
 
     // Nómina
     fechasHTML += '<div style="margin-top:1.75rem;">';
-    fechasHTML += '<div class="bib-category-title" style="margin-bottom:0.875rem;">Fechas de nómina</div>';
+    fechasHTML += '<div class="bib-category-title" style="margin-bottom:0.375rem;">Pagos de nómina</div>';
+    fechasHTML += '<div style="font-size:13px;color:var(--muted);margin-bottom:0.875rem;">Próximas fechas de pago para " + (sesion.hubActual === "CO" ? "Colombia" : "México") + ".</div>';
     fechasHTML += '<div class="nomina-card">';
     fechasHTML += '<div style="font-size:14px;color:var(--text);line-height:1.7;">' + nominaDias.regla + '</div>';
     fechasHTML += '<div style="margin-top:0.875rem;display:flex;flex-wrap:wrap;gap:8px;">';
@@ -1008,7 +1009,7 @@ function renderizarSecciones(cfg) {
     fechasHTML += '<div style="margin-top:1.75rem;" id="cumple-wrap" style="display:none"></div>';
 
     html += seccionWrapper("fechas", "Calendario", "Fechas clave",
-      "Festivos oficiales y fechas de pago de " + new Date().getFullYear() + ".", fechasHTML);
+      "Días festivos oficiales en " + new Date().getFullYear() + ".", fechasHTML);
   }
 
   // CONTACTOS — cargados dinámicamente desde el Sheet
@@ -1056,7 +1057,7 @@ function onVacResult(data) {
   if (!content) return;
 
   if (!data.ok && data.sinVacaciones) {
-    content.innerHTML = '<p class="vac-no-aplica">Este beneficio no aplica para tu tipo de contrato. ¿Tienes dudas? Escríbenos a <a href="mailto:talento@autolab.mx">talento@autolab.mx</a></p>';
+    content.innerHTML = '<p class="vac-no-aplica">Este beneficio no aplica para tu tipo de contrato. ¿Tienes dudas? Escríbenos a <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx" target="_blank">talento@autolab.mx</a></p>';
     return;
   }
   if (!data.ok) {
@@ -1096,7 +1097,7 @@ function onContactosResult(data) {
   if (!el) return;
 
   if (!data.ok || !data.contactos || !data.contactos.length) {
-    el.innerHTML = '<div class="coming-soon">El directorio estará disponible pronto. Escríbenos a <a href="mailto:talento@autolab.mx" style="color:var(--green)">talento@autolab.mx</a></div>';
+    el.innerHTML = '<div class="coming-soon">El directorio estará disponible pronto. Escríbenos a <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx" target="_blank" style="color:var(--green)">talento@autolab.mx</a></div>';
     return;
   }
 
