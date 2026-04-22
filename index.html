@@ -461,7 +461,7 @@
           <button class="seg-btn active" id="btn-mx" onclick="selectTipoDoc('MX')">🇲🇽 CURP</button>
           <button class="seg-btn"        id="btn-co" onclick="selectTipoDoc('CO')">🇨🇴 CC / CE / DNI</button>
         </div>
-        <div class="field-label" id="login-field-label">Tu CURP</div>
+        <label for="login-input" class="field-label" id="login-field-label">Tu CURP</label>
         <input type="text" class="field-input" id="login-input"
           placeholder="Ej. GOML850101HDFNRN02" maxlength="18"
           autocomplete="off" autocapitalize="characters"
@@ -518,7 +518,7 @@
         <div style="font-size:18px;font-weight:500;color:var(--text);margin-bottom:0.35rem;">¿Qué mejorarías?</div>
         <div style="font-size:14px;color:var(--muted);line-height:1.6;">Cuéntanos qué mejorarías, qué te falta o qué te gustaría ver aquí.</div>
       </div>
-      <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx&su=Sugerencia%20para%20el%20Autolabbers%20Hub"
+      <a href="#" data-app-link="sugerencia"
          style="display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:500;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:opacity 0.15s;"
          onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'" target="_blank">
         Enviar sugerencia →
@@ -526,7 +526,7 @@
     </div>
 
     <footer class="footer">
-      ¿Dudas? Escribe a <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx" target="_blank">talento@autolab.mx</a>
+      ¿Dudas? Escribe a <a href="#" data-app-link="contacto" target="_blank"></a>
       &nbsp;·&nbsp;
       <a href="#" onclick="cerrarSesion();return false;">Cerrar sesión</a>
       <span id="footer-switch-wrap" style="display:none">
@@ -543,6 +543,26 @@
 // ═══════════════════════════════════════════════════════════════════
 //  ⚙️  CONFIGURACIÓN CENTRAL — edita aquí para alimentar el hub
 // ═══════════════════════════════════════════════════════════════════
+
+// ─────────────────────────────────────────
+//  🔧 DATOS GLOBALES
+//  Si cambias un email o link aquí, se actualiza en TODO el hub.
+// ─────────────────────────────────────────
+var APP_CONFIG = {
+  emailTalento:     "talento@autolab.mx",        // contacto principal de HR
+  emailIT:          "it@autolab.com",            // contacto de soporte IT
+  urlRuna:          "https://app.runahr.com/login", // plataforma de recibos
+  asuntoSugerencia: "Sugerencia para el Autolabbers Hub"
+};
+
+// Genera un link de Gmail compose hacia el email de talento.
+// Uso: mailUrl()                       → solo "Para:"
+//      mailUrl("Duda sobre vacaciones") → "Para:" + asunto
+function mailUrl(asunto) {
+  var u = "https://mail.google.com/mail/?view=cm&to=" + encodeURIComponent(APP_CONFIG.emailTalento);
+  if (asunto) u += "&su=" + encodeURIComponent(asunto);
+  return u;
+}
 
 var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTmb9LQYdb1wEtz8VyqNEG4tM4fVsJxsN5VRGYOqUUqCBTTu2lh2p_CrQNlwiLwDqyMw/exec";
 
@@ -628,8 +648,8 @@ var HUB_CONFIG = {
     // Para agregar: copia un objeto { nombre, rol, email, slack } y agrégalo.
     // slack es opcional — si no aplica, ponlo como null.
     contactos: [
-      { nombre: "Recursos Humanos", rol: "Vacaciones, permisos y nómina", email: "talento@autolab.mx",    slack: null          },
-      { nombre: "IT / Soporte",     rol: "Accesos, equipos y sistemas",   email: "it@autolab.com",      slack: "#soporte-it"  }
+      { nombre: "Recursos Humanos", rol: "Vacaciones, permisos y nómina", email: APP_CONFIG.emailTalento, slack: null          },
+      { nombre: "IT / Soporte",     rol: "Accesos, equipos y sistemas",   email: APP_CONFIG.emailIT,       slack: "#soporte-it"  }
     ]
   },
 
@@ -664,14 +684,16 @@ var HUB_CONFIG = {
     biblioteca: [
       {
         nombre: "Reglamentos",
+        visible: false,
         docs: [
-          { titulo: "Reglamento Interno de Trabajo", desc: "Normas generales de convivencia y operación en Autolab Colombia.", url: "TU_LINK_DRIVE_CO_REGLAMENTO" }
+          { titulo: "Reglamento Interno de Trabajo", desc: "Normas generales de convivencia y operación en Autolab Colombia.", url: "TU_LINK_DRIVE_CO_REGLAMENTO", disponible: false, visible: false }
         ]
       },
       {
         nombre: "Políticas",
+        visible: false,
         docs: [
-          { titulo: "Política de Vacaciones",        desc: "Cómo se calculan, solicitan y aprueban tus días de descanso.",    url: "TU_LINK_DRIVE_CO_VACACIONES" }
+          { titulo: "Política de Vacaciones",        desc: "Cómo se calculan, solicitan y aprueban tus días de descanso.",    url: "TU_LINK_DRIVE_CO_VACACIONES", disponible: false, visible: false }
         ]
       }
     ],
@@ -688,10 +710,10 @@ var HUB_CONFIG = {
 // ═══════════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════════
-//  SESIÓN PERSISTENTE (8 horas)
+//  SESIÓN PERSISTENTE (48 horas)
 // ═══════════════════════════════════════════════════════════════════
 
-var SESION_HORAS = 8;
+var SESION_HORAS = 48;
 
 function guardarSesion(data) {
   try {
@@ -716,6 +738,20 @@ function borrarSesion() {
 }
 
 var sesion = { doc: null, nombre: null, acceso: null, hubActual: null, tipoContrato: "" };
+
+// Rellenar links estáticos (sugerencia, contacto) desde APP_CONFIG
+// Cualquier <a data-app-link="..."> en el HTML se enlaza aquí.
+window.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll("[data-app-link]").forEach(function(el) {
+    var tipo = el.getAttribute("data-app-link");
+    if (tipo === "sugerencia") {
+      el.href = mailUrl(APP_CONFIG.asuntoSugerencia);
+    } else if (tipo === "contacto") {
+      el.href = mailUrl();
+      if (!el.textContent.trim()) el.textContent = APP_CONFIG.emailTalento;
+    }
+  });
+});
 
 // Restaurar sesión si existe y no ha expirado
 (function() {
@@ -915,12 +951,12 @@ function renderizarSecciones(cfg) {
       '<div class="miinfo-panel' + (esServicesContract ? ' active' : '') + '" id="panel-nomina">' +
         '<div class="nomina-card">' +
           '<div class="nomina-steps">' +
-            '<div class="nomina-step"><div class="nomina-num">1</div><div class="nomina-text">Ingresa a <a href="https://app.runahr.com/login" target="_blank">app.runahr.com/login</a></div></div>' +
+            '<div class="nomina-step"><div class="nomina-num">1</div><div class="nomina-text">Ingresa a <a href="' + APP_CONFIG.urlRuna + '" target="_blank">app.runahr.com/login</a></div></div>' +
             '<div class="nomina-step"><div class="nomina-num">2</div><div class="nomina-text">Usa tu <strong>correo personal</strong> — el mismo con el que activaste tu cuenta en Runa.</div></div>' +
             '<div class="nomina-step"><div class="nomina-num">3</div><div class="nomina-text">Ingresa la contraseña que creaste al activar tu cuenta.</div></div>' +
           '</div>' +
-          '<a class="nomina-cta" href="https://app.runahr.com/login" target="_blank">Ir a Runa →</a>' +
-          '<div class="nomina-hint">¿Olvidaste tu contraseña? Puedes restablecerla desde la misma plataforma usando tu correo personal. Si tienes problemas para acceder, escríbenos a <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx" target="_blank">talento@autolab.mx</a></div>' +
+          '<a class="nomina-cta" href="' + APP_CONFIG.urlRuna + '" target="_blank">Ir a Runa →</a>' +
+          '<div class="nomina-hint">¿Olvidaste tu contraseña? Puedes restablecerla desde la misma plataforma usando tu correo personal. Si tienes problemas para acceder, escríbenos a <a href="' + mailUrl() + '" target="_blank">' + APP_CONFIG.emailTalento + '</a></div>' +
         '</div>' +
       '</div>';
 
@@ -938,9 +974,12 @@ function renderizarSecciones(cfg) {
   // BIBLIOTECA
   if (cfg.secciones.biblioteca) {
     var bibHTML = "";
-    if (cfg.biblioteca && cfg.biblioteca.length) {
-      cfg.biblioteca.forEach(function(cat) {
-        if (cat.visible === false) return;
+    var catsVisibles = (cfg.biblioteca || []).filter(function(cat) {
+      if (cat.visible === false) return false;
+      return (cat.docs || []).some(function(d) { return d.visible !== false; });
+    });
+    if (catsVisibles.length) {
+      catsVisibles.forEach(function(cat) {
         bibHTML += '<div class="bib-category"><div class="bib-category-title">' + cat.nombre + '</div>';
         cat.docs.forEach(function(doc) {
           if (doc.visible === false) return;
@@ -1057,7 +1096,7 @@ function onVacResult(data) {
   if (!content) return;
 
   if (!data.ok && data.sinVacaciones) {
-    content.innerHTML = '<p class="vac-no-aplica">Este beneficio no aplica para tu tipo de contrato. ¿Tienes dudas? Escríbenos a <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx" target="_blank">talento@autolab.mx</a></p>';
+    content.innerHTML = '<p class="vac-no-aplica">Este beneficio no aplica para tu tipo de contrato. ¿Tienes dudas? Escríbenos a <a href="' + mailUrl() + '" target="_blank">' + APP_CONFIG.emailTalento + '</a></p>';
     return;
   }
   if (!data.ok) {
@@ -1097,7 +1136,7 @@ function onContactosResult(data) {
   if (!el) return;
 
   if (!data.ok || !data.contactos || !data.contactos.length) {
-    el.innerHTML = '<div class="coming-soon">El directorio estará disponible pronto. Escríbenos a <a href="https://mail.google.com/mail/?view=cm&to=talento@autolab.mx" target="_blank" style="color:var(--green)">talento@autolab.mx</a></div>';
+    el.innerHTML = '<div class="coming-soon">El directorio estará disponible pronto. Escríbenos a <a href="' + mailUrl() + '" target="_blank" style="color:var(--green)">' + APP_CONFIG.emailTalento + '</a></div>';
     return;
   }
 
@@ -1121,7 +1160,7 @@ function onContactosResult(data) {
     var areaId    = "acord-" + area.replace(/\s+/g, "-").toLowerCase();
 
     html += '<div class="acord-area">';
-    html += '<div class="' + headerCls + '" onclick="toggleAcordeon(this)" data-target="' + areaId + '">';
+    html += '<div class="' + headerCls + '" onclick="toggleAcordeon(this)" role="button" tabindex="0" aria-expanded="' + (isFirst ? "true" : "false") + '" aria-controls="' + areaId + '" data-target="' + areaId + '">';
     html +=   '<div class="acord-header-left">';
     html +=     '<div class="acord-dot"></div>';
     html +=     '<span class="acord-area-name">' + area + '</span>';
@@ -1160,6 +1199,7 @@ function toggleAcordeon(header) {
   // Cerrar todos
   document.querySelectorAll(".acord-header.open").forEach(function(h) {
     h.classList.remove("open");
+    h.setAttribute("aria-expanded", "false");
   });
   document.querySelectorAll(".acord-body.open").forEach(function(b) {
     b.classList.remove("open");
@@ -1168,6 +1208,7 @@ function toggleAcordeon(header) {
   // Abrir el clickeado si estaba cerrado
   if (!isOpen) {
     header.classList.add("open");
+    header.setAttribute("aria-expanded", "true");
     var body = document.getElementById(targetId);
     if (body) body.classList.add("open");
   }
@@ -1444,7 +1485,7 @@ function onCumpleanosResult(data) {
   var label = count === 1 ? "1 cumpleaños" : count + " cumpleaños";
 
   var html =
-    '<div class="cumple-header" onclick="toggleCumpleanos(this)">' +
+    '<div class="cumple-header" onclick="toggleCumpleanos(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="cumple-body">' +
       '<div class="cumple-header-left">' +
         '<span style="font-size:18px;line-height:1;">🎂</span>' +
         '<span class="cumple-header-title">' + mes.charAt(0).toUpperCase() + mes.slice(1) + '</span>' +
@@ -1453,7 +1494,7 @@ function onCumpleanosResult(data) {
       '<span class="cumple-chevron">▾</span>' +
     '</div>' +
     '<div class="cumple-body" id="cumple-body">' +
-      '<img src="cumpleanos.gif" alt="Feliz cumpleaños" class="cumple-gif" />' +
+      '<img src="cumpleanos.webp" alt="Feliz cumpleaños" class="cumple-gif" width="800" height="400" loading="lazy" />' +
       '<div class="cumple-grid">';
 
   data.cumpleanos.forEach(function(c) {
@@ -1480,9 +1521,11 @@ function toggleCumpleanos(header) {
   if (isOpen) {
     body.classList.remove("open");
     chevron.classList.remove("open");
+    header.setAttribute("aria-expanded", "false");
   } else {
     body.classList.add("open");
     chevron.classList.add("open");
+    header.setAttribute("aria-expanded", "true");
   }
 }
 
