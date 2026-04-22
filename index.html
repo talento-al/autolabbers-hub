@@ -564,7 +564,7 @@ function mailUrl(asunto) {
   return u;
 }
 
-var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTmb9LQYdb1wEtz8VyqNEG4tM4fVsJxsN5VRGYOqUUqCBTTu2lh2p_CrQNlwiLwDqyMw/exec";
+var APPS_SCRIPT_URL = "https://script.google.com/a/macros/autolab.mx/s/AKfycbzTmb9LQYdb1wEtz8VyqNEG4tM4fVsJxsN5VRGYOqUUqCBTTu2lh2p_CrQNlwiLwDqyMw/exec";
 
 var HUB_CONFIG = {
 
@@ -1574,8 +1574,35 @@ function iniciales(n) {
 
 function jsonp(url, cb) {
   var s = document.createElement("script");
+  var yaRespondio = false;
+  var cbOriginal = window[cb];
+
+  var mensajeError =
+    "No pudimos cargar tus datos. Asegúrate de estar con tu sesión de " +
+    "<strong>@autolab.mx</strong> o <strong>@autolab.com.co</strong> iniciada " +
+    "en este navegador. Si el problema persiste, intenta abrir el Hub desde " +
+    "tu perfil de trabajo en Chrome.";
+
+  function fallar() {
+    if (yaRespondio) return;
+    yaRespondio = true;
+    window[cb] = cbOriginal;
+    cbOriginal({ ok: false, error: mensajeError });
+  }
+
+  // Envolver el callback global para evitar respuestas duplicadas si llega tarde
+  window[cb] = function(data) {
+    if (yaRespondio) return;
+    yaRespondio = true;
+    window[cb] = cbOriginal;
+    cbOriginal(data);
+  };
+
+  s.onerror = fallar;
+  // Si a los 10s no hay respuesta, asumimos que falló (Apps Script devolvió HTML de login, etc.)
+  setTimeout(fallar, 10000);
+
   s.src = url + "&callback=" + cb;
-  s.onerror = function() { window[cb]({ ok: false, error: "No se pudo conectar. Verifica tu conexión e intenta de nuevo." }); };
   document.body.appendChild(s);
 }
 
