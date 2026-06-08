@@ -1263,7 +1263,7 @@ function calcularFestivosMX() {
     var dow = d.getDay();
     if (dow === 0) return; // excluir domingos
     var hoyDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-        if (d < hoyDia) return;   // excluir fechas ya pasadas
+    if (d < hoyDia) return; // excluir fechas ya pasadas (incluye hoy)
 
     var mesKey   = anio + "-" + String(d.getMonth()).padStart(2,"0");
     var mesLabel = meses[d.getMonth()] + " " + anio;
@@ -1386,6 +1386,7 @@ function calcularFestivosCO() {
     { fecha: new Date(anio, 0, 6),   nombre: "Reyes Magos",           emiliani: true  },
     { fecha: new Date(anio, 2, 19),  nombre: "San José",              emiliani: true  },
     { fecha: new Date(anio, 5, 29),  nombre: "San Pedro y San Pablo", emiliani: true  },
+    { fecha: new Date(anio, 6, 9),   nombre: "Día de Nuestra Señora del Rosario de Chiquinquirá", emiliani: true  },
     { fecha: new Date(anio, 7, 15),  nombre: "Asunción de la Virgen", emiliani: true  },
     { fecha: new Date(anio, 9, 12),  nombre: "Día de la Raza",        emiliani: true  },
     { fecha: new Date(anio, 10, 1),  nombre: "Todos los Santos",      emiliani: true  },
@@ -1405,8 +1406,8 @@ function calcularFestivosCO() {
   candidatos.forEach(function(c) {
     var d = c.emiliani ? emiliani(c.fecha) : c.fecha;
     if (d.getDay() === 0) return;  // excluir domingos
-   var hoyDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-        if (d < hoyDia) return;           // solo próximos
+    var hoyDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+    if (d < hoyDia) return;        // solo próximos (incluye hoy)
 
     var mesKey   = anio + "-" + String(d.getMonth()).padStart(2,"0");
     var mesLabel = meses[d.getMonth()] + " " + anio;
