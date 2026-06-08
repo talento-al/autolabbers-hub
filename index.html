@@ -1404,7 +1404,8 @@ function calcularFestivosCO() {
   candidatos.forEach(function(c) {
     var d = c.emiliani ? emiliani(c.fecha) : c.fecha;
     if (d.getDay() === 0) return;  // excluir domingos
-    if (d < hoy) return;           // solo próximos
+   var hoyDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+        if (d < hoyDia) return;           // solo próximos
 
     var mesKey   = anio + "-" + String(d.getMonth()).padStart(2,"0");
     var mesLabel = meses[d.getMonth()] + " " + anio;
