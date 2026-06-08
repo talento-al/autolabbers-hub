@@ -1262,7 +1262,8 @@ function calcularFestivosMX() {
     var d   = c.fecha;
     var dow = d.getDay();
     if (dow === 0) return; // excluir domingos
-    if (d < hoy) return;   // excluir fechas ya pasadas
+    var hoyDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+        if (d < hoyDia) return;   // excluir fechas ya pasadas
 
     var mesKey   = anio + "-" + String(d.getMonth()).padStart(2,"0");
     var mesLabel = meses[d.getMonth()] + " " + anio;
