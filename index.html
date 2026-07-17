@@ -1262,8 +1262,7 @@ function calcularFestivosMX() {
     var d   = c.fecha;
     var dow = d.getDay();
     if (dow === 0) return; // excluir domingos
-    var hoyDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-    if (d < hoyDia) return; // excluir fechas ya pasadas (incluye hoy)
+    if (d < hoy) return;   // excluir fechas ya pasadas
 
     var mesKey   = anio + "-" + String(d.getMonth()).padStart(2,"0");
     var mesLabel = meses[d.getMonth()] + " " + anio;
@@ -1312,7 +1311,7 @@ function calcularFechasNomina() {
   var a = anio;
   while (proximas.length < 4) {
     var ultimo = diasEnMes(a, m);
-    var dias   = [15, ultimo === 28 ? 28 : (ultimo >= 30 ? 30 : ultimo)];
+    var dias   = [15, ultimo]; // 15 y último día del mes (28/29/30/31 según corresponda)
     dias.forEach(function(d) {
       var fecha = ajustarHabil(new Date(a, m, d));
       if (fecha >= hoy && proximas.length < 4) {
@@ -1386,7 +1385,6 @@ function calcularFestivosCO() {
     { fecha: new Date(anio, 0, 6),   nombre: "Reyes Magos",           emiliani: true  },
     { fecha: new Date(anio, 2, 19),  nombre: "San José",              emiliani: true  },
     { fecha: new Date(anio, 5, 29),  nombre: "San Pedro y San Pablo", emiliani: true  },
-    { fecha: new Date(anio, 6, 9),   nombre: "Día de Nuestra Señora del Rosario de Chiquinquirá", emiliani: true  },
     { fecha: new Date(anio, 7, 15),  nombre: "Asunción de la Virgen", emiliani: true  },
     { fecha: new Date(anio, 9, 12),  nombre: "Día de la Raza",        emiliani: true  },
     { fecha: new Date(anio, 10, 1),  nombre: "Todos los Santos",      emiliani: true  },
@@ -1406,8 +1404,7 @@ function calcularFestivosCO() {
   candidatos.forEach(function(c) {
     var d = c.emiliani ? emiliani(c.fecha) : c.fecha;
     if (d.getDay() === 0) return;  // excluir domingos
-    var hoyDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-    if (d < hoyDia) return;        // solo próximos (incluye hoy)
+    if (d < hoy) return;           // solo próximos
 
     var mesKey   = anio + "-" + String(d.getMonth()).padStart(2,"0");
     var mesLabel = meses[d.getMonth()] + " " + anio;
