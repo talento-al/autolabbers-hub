@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de reclutamiento — Autolab</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+  <!-- ============ LOGIN GATE ============ -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <img src="logo.png" alt="Autolab" class="login-logo" />
+      <h1>Panel de reclutamiento</h1>
+      <p class="login-sub">Inicia sesión con tu cuenta del equipo.</p>
+
+      <div id="login-error" class="login-error" style="display:none;"></div>
+
+      <form id="login-form" action="javascript:void(0);" onsubmit="return false;">
+        <div class="login-field">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" autocomplete="email" required placeholder="tu@autolab.mx" />
+        </div>
+        <div class="login-field">
+          <label for="login-password">Contraseña</label>
+          <input type="password" id="login-password" autocomplete="current-password" required />
+        </div>
+        <button type="submit" id="login-btn" class="btn btn-primary btn-block">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ PANEL (oculto hasta login) ============ -->
+  <div id="admin-app" class="admin-app" style="display:none;">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <img src="logo.png" alt="Autolab" class="topbar-logo" />
+        <span class="topbar-title">Reclutamiento</span>
+      </div>
+      <div class="topbar-right">
+        <span id="user-email" class="user-email"></span>
+        <button id="logout-btn" class="btn btn-ghost btn-sm">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-view="pipeline">Pipeline</button>
+        <button class="tab" data-view="candidates">Candidatos</button>
+        <button class="tab" data-view="vacancies">Vacantes</button>
+        <button class="tab" data-view="interviews">Entrevistas</button>
+      </nav>
+      <div class="toolbar-controls">
+        <select id="vacancy-filter" class="control-select">
+          <option value="all">Todas las vacantes</option>
+        </select>
+        <input id="search-input" class="control-input" placeholder="Buscar candidato..." />
+        <button id="add-btn" class="btn btn-primary btn-sm">+ Agregar</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <main id="view-container" class="view-container">
+      <div class="loading-state"><span class="spinner"></span> Cargando...</div>
+    </main>
+
+    <div class="status-bar" id="status-bar"></div>
+  </div>
+
+  <!-- Modal mount point -->
+  <div id="modal-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@13.0.0/marked.min.js"></script>
+  <!-- Lectura de CVs: mammoth (Word) por script normal; pdf.js (PDF) como módulo ES -->
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script type="module">
+    import * as pdfjsLib from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.min.mjs';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs';
+    window.pdfjsLib = pdfjsLib;
+    window.dispatchEvent(new Event('pdfjs-ready'));
+  </script>
+  <script src="admin.js"></script>
+</body>
+</html>
